@@ -177,3 +177,5 @@
      }
      lastPos = event->pos();
  }
+
+#include "glwidget.moc"

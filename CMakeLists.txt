@@ -10,14 +10,20 @@ set(redit_SRCS
 	main.cpp
 	window.cpp
 	qtlogo.cpp
+	glwidget.cpp
 )
 
-qt4_automoc(${redit_SRCS})
+set(redit_MOC_HDRS
+	window.h
+	qtlogo.h
+	glwidget.h
+)
+QT4_WRAP_CPP(redit_MOC_SRCS ${redit_MOC_HDRS})
 
 IF(UNIX)
-	add_executable(RoomEdit ${redit_SRCS})
+	add_executable(RoomEdit ${redit_SRCS} ${redit_MOC_SRCS})
 ELSEIF(WIN32)
-	add_executable(RoomEdit WIN32 ${redit_SRCS})
+	add_executable(RoomEdit WIN32 ${redit_SRCS} ${redit_MOC_SRCS})
 ENDIF()
 
 target_link_libraries(RoomEdit ${QT_QTMAIN_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI} ${QT_QTOPENGL_LIBRARY})

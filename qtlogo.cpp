@@ -411,4 +411,3 @@ void QtLogo::draw() const
 }
 //! [4]
 
-#include "qtlogo.moc"

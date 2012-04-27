@@ -90,6 +90,3 @@
      else
          QWidget::keyPressEvent(e);
  }
-
-
-#include "window.moc"

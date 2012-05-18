@@ -4,26 +4,10 @@ cmake_minimum_required(VERSION 2.6)
 find_package(Qt4 REQUIRED)
 find_package(OpenGL REQUIRED)
 
-include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+#set(CMAKE_BUILD_TYPE Release)
 
-set(redit_SRCS
-	main.cpp
-	window.cpp
-	qtlogo.cpp
-	glwidget.cpp
-)
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "-Wall -Wclobbered -Wempty-body -Wignored-qualifiers -Wmissing-field-initializers -Wsign-compare -Wtype-limits -Wuninitialized")
+endif()
 
-set(redit_MOC_HDRS
-	window.h
-	qtlogo.h
-	glwidget.h
-)
-QT4_WRAP_CPP(redit_MOC_SRCS ${redit_MOC_HDRS})
-
-IF(UNIX)
-	add_executable(RoomEdit ${redit_SRCS} ${redit_MOC_SRCS})
-ELSEIF(WIN32)
-	add_executable(RoomEdit WIN32 ${redit_SRCS} ${redit_MOC_SRCS})
-ENDIF()
-
-target_link_libraries(RoomEdit ${QT_QTMAIN_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI} ${QT_QTOPENGL_LIBRARY})
+add_subdirectory(editor)

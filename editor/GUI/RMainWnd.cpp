@@ -32,6 +32,7 @@ RMainWnd::RMainWnd(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent, f)
     setCentralWidget(meditWnd);
     
     mloggerDock = new QDockWidget(this);
+    mloggerDock->setWindowTitle(tr("Editor Log"));
     mlogger = new RLogger(mloggerDock);
     mloggerDock->setWidget(mlogger);
     addDockWidget(Qt::BottomDockWidgetArea, mloggerDock);

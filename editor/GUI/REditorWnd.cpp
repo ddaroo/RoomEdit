@@ -24,6 +24,10 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 
 #include "REditorWnd.h"
 
+#ifndef GL_MULTISAMPLE
+#define GL_MULTISAMPLE  0x809D
+#endif
+
 namespace reditor
 {
 

@@ -32,4 +32,4 @@ ELSEIF(WIN32)
         add_executable(RoomEdit WIN32 ${redit_SRCS} ${redit_MOC_SRCS})
 ENDIF()
 
-target_link_libraries(RoomEdit ${QT_QTMAIN_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI} ${QT_QTOPENGL_LIBRARY})
+target_link_libraries(RoomEdit ${QT_QTMAIN_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})

@@ -24,6 +24,9 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 
 class QTimer;
 
+/**
+ * Every message sent by "qDebug() << msg;" goes throw this function as well as warnings, errors etc.
+ */
 void msgOutput(QtMsgType type, const char *msg);   
 
 namespace reditor

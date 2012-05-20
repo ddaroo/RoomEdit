@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     
     reditor::RMainWnd * mwnd = new reditor::RMainWnd();
     reditor::REditor * edit = new reditor::REditor(mwnd);
-    qDebug() << "Loading objects...";
+    qDebug() << "TODO Loading objects...";
     // TODO load available objects for the editor
     
     return app.exec();

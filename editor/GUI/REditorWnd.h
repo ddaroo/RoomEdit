@@ -38,7 +38,16 @@ protected:
     void paintGL();
     void resizeGL(int width, int height);
     void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent * event);
     void mouseMoveEvent(QMouseEvent *event);
+    void keyPressEvent(QKeyEvent * event);
+    
+private:
+    void liczWsp(GLdouble begin[3],GLdouble end[3], float point[2]);
+    void drawFloor();
+    void walls();
+    void rect();
+    void grid();
 };
 
 } /* namespace reditor */

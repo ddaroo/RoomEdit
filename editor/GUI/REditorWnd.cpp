@@ -22,6 +22,7 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include <QtOpenGL>
 
 #include <math.h>
+#include <GL/glu.h>
 
 #include "REditorWnd.h"
 

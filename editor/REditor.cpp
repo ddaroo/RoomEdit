@@ -19,6 +19,9 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtCore/QDebug>
 #include <QtGui/QColor>
+#ifdef Q_WS_WIN
+#  include "windows.h"
+#endif
 #include <GL/glu.h>
 #include <math.h>
 

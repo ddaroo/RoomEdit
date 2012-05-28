@@ -26,7 +26,7 @@ namespace reditor
 {
 
 class REditObj;
-class RCamera;
+struct RCamera;
     
 class REditWnd : public QGLWidget
 {

@@ -17,6 +17,10 @@ You should have received a copy of the GNU General Public License
 along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QtCore/qglobal.h>
+#ifdef Q_WS_WIN
+#  include <windows.h>
+#endif
 #include <GL/glu.h>
 
 #include "RObjSelection.h"

@@ -20,7 +20,9 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore/QDebug>
 #include <QtGui>
 #include <QtOpenGL>
-
+#ifdef Q_WS_WIN
+#  include <windows.h>
+#endif
 #include <GL/glu.h>
 
 #include "REditWnd.h"

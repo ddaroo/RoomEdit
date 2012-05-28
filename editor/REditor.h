@@ -29,7 +29,7 @@ namespace reditor
 class REditObj;
 class REditWnd;
 class RObjRoom;
-class RCamera;
+struct RCamera;
 class RObjSelection;
 /**
  * Implements logic of the editor.

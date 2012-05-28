@@ -17,35 +17,25 @@ You should have received a copy of the GNU General Public License
 along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QtGui/QDockWidget>
-
-#include "RMainWnd.h"
-#include "REditWnd.h"
-#include "RLogger.h"
-#include "REditor.h"
+#include "REditObj.h"
 
 namespace reditor
 {
 
-RMainWnd::RMainWnd(reditor::REditor* edit) : QMainWindow(), medit(edit)
+REditObj::REditObj() : mname("Empty object")
 {
-    meditWnd = new REditWnd(medit->objects(), medit->camera(), this);
-    setCentralWidget(meditWnd);
-    
-    mloggerDock = new QDockWidget(this);
-    mloggerDock->setWindowTitle(tr("Editor Log"));
-    mlogger = new RLogger(mloggerDock);
-    mloggerDock->setWidget(mlogger);
-    addDockWidget(Qt::BottomDockWidgetArea, mloggerDock);
-    
-    // TODO attach dock window with available objects
-    
-    // TODO menu
+
 }
 
-RMainWnd::~RMainWnd()
+REditObj::REditObj(QString name) : mname(name)
 {
+
+}
+
+REditObj::~REditObj()
+{
+
 }
 
 
-} /* namespace reditor */
+} // namespace reditor

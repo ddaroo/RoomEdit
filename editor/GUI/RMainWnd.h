@@ -25,19 +25,21 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 namespace reditor
 {
 
-class REditorWnd;
+class REditWnd;
 class RLogger;
-    
+class REditor;
+
 class RMainWnd : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    RMainWnd(QWidget* parent = 0, Qt::WindowFlags f = 0);
+    RMainWnd(REditor * edit);
     virtual ~RMainWnd();
     
 private:
-    REditorWnd * meditWnd;
+    REditor * medit;
+    REditWnd * meditWnd;
     QDockWidget * mloggerDock;
     RLogger * mlogger;
 };

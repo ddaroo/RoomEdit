@@ -22,6 +22,7 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 
 #include "REditor.h"
 #include "GUI/RMainWnd.h"
+#include "GUI/REditWnd.h"
 #include "GUI/RLogger.h"
 
 int main(int argc, char *argv[])
@@ -29,11 +30,14 @@ int main(int argc, char *argv[])
     qInstallMsgHandler(msgOutput);
     
     QApplication app(argc, argv); 
-    
-    reditor::RMainWnd * mwnd = new reditor::RMainWnd();
-    reditor::REditor * edit = new reditor::REditor(mwnd);
+   
     qDebug() << "TODO Loading objects...";
     // TODO load available objects for the editor
+    reditor::REditor * edit = new reditor::REditor();
+    reditor::RMainWnd * mwnd = new reditor::RMainWnd(edit);
+    edit->attachTo( static_cast<reditor::REditWnd *>(mwnd->centralWidget()) );
+    mwnd->resize(800, 600);
+    mwnd->show();
     
     return app.exec();
 }

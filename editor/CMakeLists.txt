@@ -10,8 +10,15 @@ set(redit_SRCS
         # editor
         main.cpp
         REditor.cpp
+        # general objects
+        REditObj.cpp
+        RGrid.cpp
+        # grid objects
+        RGridObj.cpp
+        RObjRoom.cpp
+        RObjSelection.cpp
         # GUI
-        GUI/REditorWnd.cpp
+        GUI/REditWnd.cpp
         GUI/RLogger.cpp
         GUI/RMainWnd.cpp
 )
@@ -20,7 +27,7 @@ set(redit_MOC_HDRS
         # editor
         REditor.h
         # GUI
-        GUI/REditorWnd.h
+        GUI/REditWnd.h
         GUI/RLogger.h
         GUI/RMainWnd.h
 )

@@ -17,35 +17,40 @@ You should have received a copy of the GNU General Public License
 along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QtGui/QDockWidget>
+#ifndef REDIT_OBJ_H
+#define REDIT_OBJ_H
 
-#include "RMainWnd.h"
-#include "REditWnd.h"
-#include "RLogger.h"
-#include "REditor.h"
+#include <QtCore/QString>
 
 namespace reditor
 {
-
-RMainWnd::RMainWnd(reditor::REditor* edit) : QMainWindow(), medit(edit)
+/**
+ * Base class for all objects which can be painted in the editor window.
+ */
+class REditObj
 {
-    meditWnd = new REditWnd(medit->objects(), medit->camera(), this);
-    setCentralWidget(meditWnd);
-    
-    mloggerDock = new QDockWidget(this);
-    mloggerDock->setWindowTitle(tr("Editor Log"));
-    mlogger = new RLogger(mloggerDock);
-    mloggerDock->setWidget(mlogger);
-    addDockWidget(Qt::BottomDockWidgetArea, mloggerDock);
-    
-    // TODO attach dock window with available objects
-    
-    // TODO menu
-}
 
-RMainWnd::~RMainWnd()
-{
-}
+public:
+    REditObj();
+    REditObj(QString name);
+    virtual ~REditObj();
+    /**
+     * Paint object in the editor window
+     */
+    virtual void paintGL() const = 0;
+    /**
+     * Returns human readable name of the object
+     */
+    QString name() const
+    {
+        return mname;
+    }
 
+private:
+    // human readable name of the object
+    QString mname;
+};
 
-} /* namespace reditor */
+} // namespace reditor
+
+#endif /* REDIT_OBJECT_H */

@@ -17,35 +17,38 @@ You should have received a copy of the GNU General Public License
 along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QtGui/QDockWidget>
+#ifndef RGRID_H
+#define RGRID_H
 
-#include "RMainWnd.h"
-#include "REditWnd.h"
-#include "RLogger.h"
-#include "REditor.h"
+#include <QtGui/QColor>
 
-namespace reditor
+#include "REditObj.h"
+
+namespace reditor 
 {
-
-RMainWnd::RMainWnd(reditor::REditor* edit) : QMainWindow(), medit(edit)
+/**
+ * Base class for all objects which can be painted in the editor window.
+ */
+class RGrid : public REditObj
 {
-    meditWnd = new REditWnd(medit->objects(), medit->camera(), this);
-    setCentralWidget(meditWnd);
     
-    mloggerDock = new QDockWidget(this);
-    mloggerDock->setWindowTitle(tr("Editor Log"));
-    mlogger = new RLogger(mloggerDock);
-    mloggerDock->setWidget(mlogger);
-    addDockWidget(Qt::BottomDockWidgetArea, mloggerDock);
+public:
+    /**
+     * size - dimensions of the grid: size X size
+     * clr - colour of the grid
+     * cellSize - size of the single cell in the grid
+     */
+    RGrid(int size, const QColor& clr, float cellSize);
+    virtual ~RGrid();
+    virtual void paintGL() const;
     
-    // TODO attach dock window with available objects
-    
-    // TODO menu
-}
+private:
+    // size of the grid
+    int msize;
+    QColor mclr;
+    float mcellSize;
+};
 
-RMainWnd::~RMainWnd()
-{
-}
+} // namespace reditor
 
-
-} /* namespace reditor */
+#endif /* RGRID_H */

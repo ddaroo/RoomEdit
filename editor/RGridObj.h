@@ -17,39 +17,40 @@ You should have received a copy of the GNU General Public License
 along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef REDITOR_WND_H
-#define REDITOR_WND_H
+#ifndef RGRID_OBJ_H
+#define RGRID_OBJ_H
 
-#include <QGLWidget>
+#include "REditObj.h"
 
-namespace reditor
+namespace reditor 
 {
-
-class REditorWnd : public QGLWidget
-{
-    Q_OBJECT
-
+/**
+ * Base class for all objects which can be painted in the editor window and placed on the grid.
+ */
+class RGridObj : public REditObj
+{  
 public:
-    REditorWnd(QWidget *parent = 0);
-    virtual ~REditorWnd();
-
-protected:
-    void initializeGL();
-    void paintGL();
-    void resizeGL(int width, int height);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent * event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void keyPressEvent(QKeyEvent * event);
+    RGridObj(QString name);
+    RGridObj(QString name, int x, int y, int width, int height);
+    virtual ~RGridObj();
+    virtual void paintGL() const = 0;
+    int x() const
+    {
+        return mx;
+    }
+    int y() const
+    {
+        return my;
+    }
+    void move(int x, int y);
     
 private:
-    void liczWsp(GLdouble begin[3],GLdouble end[3], float point[2]);
-    void drawFloor();
-    void walls();
-    void rect();
-    void grid();
+    // x, y coordinate of the object on the grid
+    int mx, my;
+    // how many cells is used by the object
+    int mwidth, mheight;
 };
 
-} /* namespace reditor */
+} // namespace reditor
 
-#endif /* REDITOR_WND_H */
+#endif /* RGRID_OBJ_H */

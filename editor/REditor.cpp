@@ -22,7 +22,13 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #ifdef Q_WS_WIN
 #  include "windows.h"
 #endif
+
+#ifdef __APPLE__
+#include <OpenGL/glu.h>
+#else
 #include <GL/glu.h>
+#endif
+
 #include <math.h>
 
 #include "REditor.h"

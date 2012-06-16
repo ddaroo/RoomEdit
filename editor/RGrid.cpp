@@ -37,19 +37,24 @@ RGrid::~RGrid()
 
 void RGrid::paintGL() const
 {
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_COLOR_MATERIAL);
+    glLineWidth(1.0f);
     glColor3f(mclr.redF(), mclr.greenF(), mclr.blueF());
     for (int i = 0; i <= msize; ++i)
     {
         glBegin(GL_LINES);
-            glVertex3f(-10.0f, 0.01f, -10.0f + i*mcellSize);
-            glVertex3f(10.0f , 0.01f, -10.0f + i*mcellSize);
+            glVertex3f(-10.0f, 0.06f, -10.0f + i*mcellSize);
+            glVertex3f(10.0f , 0.06f, -10.0f + i*mcellSize);
         glEnd();
         
         glBegin(GL_LINES);
-            glVertex3f(-10.0f + i*mcellSize, 0.01f, -10.0f);
-            glVertex3f(-10.0f + i*mcellSize, 0.01f, 10.0f);
+            glVertex3f(-10.0f + i*mcellSize, 0.06f, -10.0f);
+            glVertex3f(-10.0f + i*mcellSize, 0.06f, 10.0f);
         glEnd();
     }
+    glDisable(GL_COLOR_MATERIAL);
+    glEnable(GL_TEXTURE_2D);
 }
 
 } // namespace reditor

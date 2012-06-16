@@ -10,6 +10,9 @@ set(redit_SRCS
         # editor
         main.cpp
         REditor.cpp
+        RModel3DS.cpp
+        RTexture.cpp
+        RResourceDB.cpp
         # general objects
         REditObj.cpp
         RGrid.cpp

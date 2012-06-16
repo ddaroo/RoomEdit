@@ -18,7 +18,10 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <QtCore/QDebug>
+#include <QtCore/QDir>
+#include <QtCore/QFileInfo>
 #include <QtGui/QColor>
+
 #ifdef Q_WS_WIN
 #  include "windows.h"
 #endif
@@ -32,9 +35,43 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include "RObjSelection.h"
 #include "RCamera.h"
 #include "GUI/REditWnd.h"
+#include "RModel3DS.h"
+#include "RConfig.h"
 
 namespace reditor
 {
+
+struct sceneObject
+{
+        float x,y,ang;
+        QString fileName,sceneName;
+};
+
+typedef QVector<sceneObject> objectsType;
+objectsType objects;
+
+//*******************   
+/*void REditor::rysujModel(QString file_name, int tex_num)
+{
+    QFileInfo finfo(file_name);
+    skladTypeCit model_tmp = sklad_modeli.find(file_name);
+    if (model_tmp != sklad_modeli.end()) {
+        if (tex_num == -1)
+        {
+            model_tmp.value()->draw();
+        }
+        else
+        {
+            model_tmp.value()->draw(tex_num, false);
+        }
+    }
+    else
+    {
+        qWarning() << "No model with the name " << finfo.absoluteFilePath();
+    }
+} */
+//*******************
+    
     
 #define PI 3.14159265
 

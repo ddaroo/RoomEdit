@@ -20,10 +20,15 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore/QDebug>
 #include <QtGui/QApplication>
 
+#include "global.h"
 #include "REditor.h"
+#include "RResourceDB.h"
+#include "RConfig.h"
 #include "GUI/RMainWnd.h"
 #include "GUI/REditWnd.h"
 #include "GUI/RLogger.h"
+
+reditor::RResourceDB rscDB(reditor::RConfig::texturesDir(""), reditor::RConfig::modelsDir(""));
 
 int main(int argc, char *argv[])
 {
@@ -31,10 +36,9 @@ int main(int argc, char *argv[])
     
     QApplication app(argc, argv); 
    
-    qDebug() << "TODO Loading objects...";
-    // TODO load available objects for the editor
+    rscDB.load();
     reditor::REditor * edit = new reditor::REditor();
-    reditor::RMainWnd * mwnd = new reditor::RMainWnd(edit);
+    reditor::RMainWnd * mwnd = new reditor::RMainWnd(edit);   
     edit->attachTo( static_cast<reditor::REditWnd *>(mwnd->centralWidget()) );
     mwnd->resize(800, 600);
     mwnd->show();

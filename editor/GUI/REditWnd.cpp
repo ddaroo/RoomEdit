@@ -28,6 +28,7 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include "REditWnd.h"
 #include "REditObj.h"
 #include "RCamera.h"
+#include "global.h"
 
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
@@ -49,30 +50,42 @@ REditWnd::~REditWnd()
 
 void REditWnd::initializeGL()
 {
-    
+    glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+    glEnable(GL_DEPTH_TEST);
+    glShadeModel(GL_SMOOTH);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glEnable(GL_LIGHTING);
+    GLfloat ambient[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient);
+    GLint position[4] = {0, 10, 0, 1};
+    glLightiv(GL_LIGHT0, GL_POSITION, position);
+    glEnable(GL_LIGHT0);
 }
 
 void REditWnd::paintGL()
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
-    glShadeModel(GL_SMOOTH);
     glLoadIdentity();
     gluLookAt(mcam->kX, mcam->kY, mcam->kZ, mcam->pX, mcam->pY, mcam->pZ, mcam->upX, mcam->upY, mcam->upZ);
     glColor4f(0.4f, 0.4f, 0.4f, 0.5f);
+    
+    glEnable(GL_COLOR_MATERIAL);
     glBegin(GL_QUADS);
-        glVertex3i(-20, 0, -20);
-        glVertex3i(20, 0, -20);
-        glVertex3i(20, 0, 20);
-        glVertex3i(-20, 0, 20);
+        glVertex3i(-15, 0, -15);
+        glVertex3i(15, 0, -15);
+        glVertex3i(15, 0, 15);
+        glVertex3i(-15, 0, 15);
     glEnd();
+    glDisable(GL_COLOR_MATERIAL);
 
+    glEnable(GL_TEXTURE_2D);
     foreach(const REditObj * obj, *mobjs)
     {
         obj->paintGL();
     }
-    
+    glDisable(GL_TEXTURE_2D);
+
     glFlush();
 }
 

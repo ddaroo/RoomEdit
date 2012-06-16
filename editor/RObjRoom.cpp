@@ -23,7 +23,11 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #endif
 #include <GL/glu.h>
 
+#include "global.h"
 #include "RObjRoom.h"
+#include "REditor.h"
+#include "RResourceDB.h"
+#include "RTexture.h"
 
 namespace reditor
 {
@@ -45,17 +49,37 @@ RObjRoom::~RObjRoom()
 
 void RObjRoom::paintGL() const
 {
+    int dh = mbeginCorner[0] - mendCorner[0];
+    int dw = mbeginCorner[1] - mendCorner[1];
+
     // paint floor
+    GLfloat ambientFloor[4] = {0.5f, 0.5f, 0.5f, 1.0f};
+    GLfloat specularFloor[4] = {0.8f, 0.8f, 0.8f, 1.0f};
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambientFloor);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specularFloor);
+    glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 128);
+    glBindTexture(GL_TEXTURE_2D, rscDB.texture("floor3")->id());
     glColor3f(1.0f, 0.4f, 0.0f);
+   
     glBegin(GL_QUADS);
-        glVertex3f(mbeginCorner[0], 0.0f, mbeginCorner[1]);
-        glVertex3f(mbeginCorner[0], 0.0f, mendCorner[1]);
-        glVertex3f(mendCorner[0], 0.0f, mendCorner[1]);
-        glVertex3f(mendCorner[0], 0.0f, mbeginCorner[1]);
+        glTexCoord2d(0, 0);
+        glVertex3f(mbeginCorner[0], 0.05f, mbeginCorner[1]);
+        glTexCoord2d(dh, 0);
+        glVertex3f(mbeginCorner[0], 0.05f, mendCorner[1]);
+        glTexCoord2d(dh, dw);
+        glVertex3f(mendCorner[0], 0.05f, mendCorner[1]);
+        glTexCoord2d(0, dw);
+        glVertex3f(mendCorner[0], 0.05f, mbeginCorner[1]);
     glEnd();
+    
     // paint walls
-    // TODO missing functionality
+    GLfloat ambientWalls[4] = {0.95f, 0.95f, 0.95f, 1.0f};
+    GLfloat specularWalls[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+    glMaterialfv(GL_FRONT, GL_AMBIENT, ambientWalls);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, specularWalls);
+    glBindTexture(GL_TEXTURE_2D, rscDB.texture("wall4")->id());
     glColor3f(0.8f, 0.8f, 0.8f);
+    // TODO missing functionality
 //     if (camMode == 1)
 //     {
 //         GLdouble cutPlane[4] = {-kX, -kY, -kZ, 4.0};
@@ -63,20 +87,28 @@ void RObjRoom::paintGL() const
 //         glEnable(GL_CLIP_PLANE0);
 //     }
     glBegin(GL_TRIANGLE_STRIP);
+    glTexCoord2d(0, 0);
         glVertex3f(mbeginCorner[0], 0.0f, mbeginCorner[1]);
+        glTexCoord2d(0, 1);
         glVertex3f(mbeginCorner[0], 2.5f, mbeginCorner[1]);
+        glTexCoord2d(dh, 0);
         glVertex3f(mendCorner[0], 0.0f, mbeginCorner[1]);
+        glTexCoord2d(dh, 1);
         glVertex3f(mendCorner[0], 2.5f, mbeginCorner[1]);
+        glTexCoord2d(dh+dw, 0);
         glVertex3f(mendCorner[0], 0.0f, mendCorner[1]);
-        glColor3f(0.3f, 0.3f, 0.3f);
+        glTexCoord2d(dh+dw, 1);
         glVertex3f(mendCorner[0], 2.5f, mendCorner[1]);
+        glTexCoord2d(2*dh+dw, 0);
         glVertex3f(mbeginCorner[0], 0.0f, mendCorner[1]);
+        glTexCoord2d(2*dh+dw, 1);
         glVertex3f(mbeginCorner[0], 2.5f, mendCorner[1]);
-        glColor3f(0.8f, 0.8f, 0.8f);
+        glTexCoord2d(2*dh+ 2*dw, 0);
         glVertex3f(mbeginCorner[0], 0.0f, mbeginCorner[1]);
+        glTexCoord2d(2*dh+2*dw, 1);
         glVertex3f(mbeginCorner[0], 2.5f, mbeginCorner[1]);
     glEnd();
-    glDisable(GL_CLIP_PLANE0);
+    //glDisable(GL_CLIP_PLANE0);
 }
 
 void RObjRoom::updateCorners(float beginCorner[2], float endCorner[2])

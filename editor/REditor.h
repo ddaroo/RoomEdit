@@ -128,6 +128,10 @@ private:
     
     // update selection coordinates, (x, y) - position of the mouse
     void updateSelection(int x, int y, float point[]);
+    
+public:
+    void ladujModele();
+    void rysujModel(QString file_name, int tex_num = -1);
 };
 
 } /* namespace reditor */

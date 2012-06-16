@@ -45,28 +45,48 @@ RObjSelection::~RObjSelection()
 
 void RObjSelection::paintGL() const
 {
-    glPointSize(5.0f);
-    glColor4f(0.0f, 1.0f, 0.0f, 0.5f);
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4f(0.0f, 1.0f, 0.0f, 0.4f);
     glBegin(GL_QUADS);
-        glVertex3f(mbeginCorner[0], 0.0f, mbeginCorner[1]);
-        glVertex3f(mbeginCorner[0], 0.0f, mendCorner[1]);
-        glVertex3f(mendCorner[0], 0.0f, mendCorner[1]);
-        glVertex3f(mendCorner[0], 0.0f, mbeginCorner[1]);
+        glVertex3f(mbeginCorner[0], 0.07f, mbeginCorner[1]);
+        glVertex3f(mbeginCorner[0], 0.07f, mendCorner[1]);
+        glVertex3f(mendCorner[0], 0.07f, mendCorner[1]);
+        glVertex3f(mendCorner[0], 0.07f, mbeginCorner[1]);
     glEnd();
 
+    glLineWidth(3.0f);
+    glColor4f(0.4f, 1.0f, 0.0f, 1.0f);
+    glBegin(GL_LINES);
+        glVertex3f(mbeginCorner[0], 0.07f, mbeginCorner[1]);
+        glVertex3f(mbeginCorner[0], 0.07f, mendCorner[1]);
+        glVertex3f(mbeginCorner[0], 0.07f, mendCorner[1]);
+        glVertex3f(mendCorner[0], 0.07f, mendCorner[1]);
+        glVertex3f(mendCorner[0], 0.07f, mendCorner[1]);
+        glVertex3f(mendCorner[0], 0.07f, mbeginCorner[1]);
+        glVertex3f(mendCorner[0], 0.07f, mbeginCorner[1]);
+        glVertex3f(mbeginCorner[0], 0.07f, mbeginCorner[1]);
+    glEnd();
+
+    glPointSize(5.0f);
     glColor3f(1.0f, 0.0f, 1.0f);
     glPushMatrix();
         glBegin(GL_POINTS);
-            glVertex3f(mbeginCorner[0], 0.0f, mbeginCorner[1]);
+            glVertex3f(mbeginCorner[0], 0.05f, mbeginCorner[1]);
         glEnd();
     glPopMatrix();
 
     glColor3f(0.0f, 1.0f, 1.0f);
     glPushMatrix();
         glBegin(GL_POINTS);
-            glVertex3f(mendCorner[0], 0.0f, mendCorner[1]);
+            glVertex3f(mendCorner[0], 0.05f, mendCorner[1]);
         glEnd();
     glPopMatrix();
+    glDisable(GL_BLEND);
+    glDisable(GL_COLOR_MATERIAL);
+    glEnable(GL_TEXTURE_2D);
 }
 
 void RObjSelection::updateCorners(float beginCorner[2], float endCorner[2])

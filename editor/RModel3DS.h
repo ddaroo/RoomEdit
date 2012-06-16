@@ -42,8 +42,13 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include <algorithm>
 #include <assert.h>
 #include <math.h>
-#include "GL/gl.h"
-#include "GL/glu.h"
+
+#ifdef Q_WS_MAC
+#include <OpenGL/glu.h>
+#else
+#include <GL/glu.h>
+#endif
+
 #include "RTexture.h"
 
 #define CHUNK_MAIN                                      0x4D4D

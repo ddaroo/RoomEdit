@@ -10,4 +10,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "-Wall -Wclobbered -Wempty-body -Wignored-qualifiers -Wmissing-field-initializers -Wsign-compare -Wtype-limits -Wuninitialized")
 endif()
 
+if(APPLE)
+	set(CMAKE_CXX_FLAGS "-Wall -Wempty-body -Wmissing-field-initializers -Wsign-compare")
+endif()
+
 add_subdirectory(editor)

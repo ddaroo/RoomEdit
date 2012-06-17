@@ -26,7 +26,7 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 namespace reditor
 {
     
-class model3DS;
+class RModel3DS;
 class RTexture;
   
 /**
@@ -39,7 +39,7 @@ public:
     virtual ~RResourceDB();
     void load();
     RTexture * texture(const QString& name) const;
-    model3DS * model(const QString& name) const;
+    RModel3DS * model(const QString& name) const;
     
 private:
     QString mtextDir, mmodDir;
@@ -49,9 +49,9 @@ private:
     typedef QMap<QString, RTexture *>::iterator TexsIt;
     Texs mtextures;
     
-    typedef QMap<QString, model3DS *> Mods;
-    typedef QMap<QString, model3DS *>::const_iterator ModsCit;
-    typedef QMap<QString, model3DS *>::const_iterator ModsIt;
+    typedef QMap<QString, RModel3DS *> Mods;
+    typedef QMap<QString, RModel3DS *>::const_iterator ModsCit;
+    typedef QMap<QString, RModel3DS *>::const_iterator ModsIt;
     Mods mmodels;
 };
 

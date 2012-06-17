@@ -89,7 +89,7 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 namespace reditor
 {
 
-class model3DS;
+class RModel3DS;
 class mesh3DS;
 class material3DS;
 
@@ -155,7 +155,7 @@ class mesh3DS{
 private:
     std::string m_name;
     std::string m_materialName;
-        model3DS *m_parentModel;
+        RModel3DS *m_parentModel;
 
         std::vector<float> m_vertices;
         std::vector<float> m_normals;
@@ -177,7 +177,7 @@ private:
 
 public:
 
-        mesh3DS(model3DS *parentModel):m_parentModel(parentModel){ m_wave = false;}
+        mesh3DS(RModel3DS *parentModel):m_parentModel(parentModel){ m_wave = false;}
         
     void buildMesh();
         void calculateNormals();
@@ -213,7 +213,7 @@ typedef struct{
         float minZ,maxZ;
 } boundingBox3DS;
 
-class model3DS{
+class RModel3DS {
 private:
     std::string m_filename;
         std::string m_filepath;
@@ -238,11 +238,13 @@ private:
 
         // Private copy and assignment constructors
         // to prevent object being copied
-        model3DS(const model3DS &model);
-        model3DS &operator=(const model3DS &model);
+        // Private copy and assignment constructors
+        // to prevent object being copied
+        RModel3DS(const RModel3DS &model);
+        RModel3DS &operator=(const RModel3DS &model);
     
 public:
-        model3DS(const char* filename, float scale = 1);
+        RModel3DS(const char* filename, float scale = 1);
     
     void draw(int TextureID = 0, bool centruj = false);
     void setWaved(bool wave);

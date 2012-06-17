@@ -20,6 +20,7 @@ set(redit_SRCS
         RGridObj.cpp
         RObjRoom.cpp
         RObjSelection.cpp
+        RSceneObj.cpp
         # GUI
         GUI/REditWnd.cpp
         GUI/RLogger.cpp

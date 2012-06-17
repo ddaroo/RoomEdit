@@ -31,6 +31,7 @@ class REditWnd;
 class RObjRoom;
 struct RCamera;
 class RObjSelection;
+class RSceneObj;
 /**
  * Implements logic of the editor.
  */
@@ -116,6 +117,9 @@ private:
     float mbeginCorner[2];
     // end point for the room
     float mendCorner[2]; 
+    bool mroomDimensionsPicked;
+    // currently selected object
+    RSceneObj * mactiveObject;
     
     // camera moving resolution
     double const mangle;
@@ -123,15 +127,11 @@ private:
     float mcellSize;
     
     // selection of the size of the room or rotation of the camera
-    enum EditMode {SELECTION, VIEW, DEFAULT};
-    EditMode mmode;
+    enum EditMode {SELECTION, VIEW, OBJECTS, DEFAULT};
+    EditMode mmode, mprevMode;
     
     // update selection coordinates, (x, y) - position of the mouse
-    void updateSelection(int x, int y, float point[]);
-    
-public:
-    void ladujModele();
-    void rysujModel(QString file_name, int tex_num = -1);
+    void updateCoord(int x, int y, float point[]);
 };
 
 } /* namespace reditor */

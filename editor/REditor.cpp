@@ -34,6 +34,7 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 
 #include <math.h>
 
+#include "global.h"
 #include "REditor.h"
 #include "REditObj.h"
 #include "RGrid.h"
@@ -41,50 +42,19 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include "RObjSelection.h"
 #include "RCamera.h"
 #include "GUI/REditWnd.h"
-#include "RModel3DS.h"
+#include "RSceneObj.h"
 #include "RConfig.h"
 
 namespace reditor
-{
-
-struct sceneObject
-{
-        float x,y,ang;
-        QString fileName,sceneName;
-};
-
-typedef QVector<sceneObject> objectsType;
-objectsType objects;
-
-//*******************   
-/*void REditor::rysujModel(QString file_name, int tex_num)
-{
-    QFileInfo finfo(file_name);
-    skladTypeCit model_tmp = sklad_modeli.find(file_name);
-    if (model_tmp != sklad_modeli.end()) {
-        if (tex_num == -1)
-        {
-            model_tmp.value()->draw();
-        }
-        else
-        {
-            model_tmp.value()->draw(tex_num, false);
-        }
-    }
-    else
-    {
-        qWarning() << "No model with the name " << finfo.absoluteFilePath();
-    }
-} */
-//*******************
-    
+{  
     
 #define PI 3.14159265
 
 // camera moving
-double dkX,dkY,dkZ;
+double dkX,dkY,dkZ; // TODO get rid of these global variables
 
-REditor::REditor() : mmouseX(0), mmouseY(0), mangle(0.1*PI/180.0), mcellSize(0.5f), mmode(DEFAULT)
+REditor::REditor() : mmouseX(0), mmouseY(0), mroomDimensionsPicked(false), mactiveObject(0),
+    mangle(0.1*PI/180.0), mcellSize(0.5f), mmode(DEFAULT)
 {  
     mcam = new RCamera();
     
@@ -133,7 +103,7 @@ REditObj * REditor::removeObject(REditObj* obj)
 
 void REditor::hmouseMoved(int x, int y)
 {
-    if (mmode == VIEW)
+    if(mmode == VIEW)
     {
         int dx = mmouseX - x;
         int dy = mmouseY - y;
@@ -164,10 +134,15 @@ void REditor::hmouseMoved(int x, int y)
             Q_ASSERT_X(false, "hmouseMoved", "bad camera mode");
         };
     }
-    if (mmode == SELECTION)
+    if(mmode == SELECTION)
     {
-        updateSelection(x, y, mendCorner);
+        updateCoord(x, y, mendCorner);
         msel->updateCorners(mbeginCorner, mendCorner);
+    }
+    if(mmode == OBJECTS)
+    {
+        // TODO move active object
+        mactiveObject;
     }
     mmouseX = x;
     mmouseY = y;
@@ -181,19 +156,22 @@ void REditor::hmousePressed(Qt::MouseButton b, int x, int y)
     switch (b)
     {
     case Qt::RightButton:
+        mprevMode = mmode;
         mmode = VIEW;
         break;
 
     case Qt::LeftButton:
-        updateSelection(x, y, mbeginCorner);
-        updateSelection(x, y, mendCorner);
-        msel->updateCorners(mbeginCorner, mendCorner);
-        if(mobjs.indexOf(mroom) != -1)
+        if(!mroomDimensionsPicked)
         {
-            removeObject(mroom);
+            mmode = SELECTION;
         }
-        addObject(msel);
-        mmode = SELECTION;
+        if(mmode == SELECTION)
+        {
+            updateCoord(x, y, mbeginCorner);
+            updateCoord(x, y, mendCorner);
+            msel->updateCorners(mbeginCorner, mendCorner);
+            addObject(msel);
+        }
         break;
 
     default:
@@ -209,16 +187,29 @@ void REditor::hmouseReleased(Qt::MouseButton b, int x, int y)
 {
     qDebug() << "REditor::hmouseReleased " << b << ", x = " << x << ", y = " << y;
     
-    if(b == Qt::LeftButton)
+    if(b == Qt::LeftButton && mmode == SELECTION)
     {
         mroom->updateCorners(mbeginCorner, mendCorner);
         removeObject(msel);
         addObject(mroom);
+        mroomDimensionsPicked = true;
+        
+        mmode = OBJECTS;
     }
-    mmode = DEFAULT;
+    if(b == Qt::LeftButton && mmode == OBJECTS)
+    {
+        mactiveObject = new RSceneObj("door"); // FIXME temporary code
+        addObject(mactiveObject);
+    }
+    if(b == Qt::RightButton && mmode == VIEW)
+    {
+        mmode = mprevMode;
+    }
     
     mwnd->repaint();
 }
+
+// TODO handle mouse scrolling
 
 void REditor::hkeyPressed(int keyCode)
 {
@@ -305,7 +296,7 @@ void REditor::hload()
     // TODO implementation
 }
 
-void REditor::updateSelection(int x, int y, float point[])
+void REditor::updateCoord(int x, int y, float point[])
 {
     GLdouble model[16];
     glGetDoublev(GL_MODELVIEW_MATRIX, model);

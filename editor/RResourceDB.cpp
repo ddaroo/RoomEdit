@@ -62,13 +62,13 @@ void RResourceDB::load()
         }
     }
     // load models from the directory
-    model3DS * mod;
+    RModel3DS * mod;
     QDir mdir(mmodDir);
     foreach(QFileInfo finfo, mdir.entryInfoList())
     {
         if (finfo.isFile() && finfo.suffix().toLower() == "3ds")
         {
-            mod = new model3DS(finfo.absoluteFilePath().toStdString().c_str(), 1.0f);
+            mod = new RModel3DS(finfo.absoluteFilePath().toStdString().c_str(), 1.0f);
             mmodels.insert(finfo.baseName(), mod);
             qDebug() << "Model " << finfo.baseName() << " loaded from the file " << finfo.absoluteFilePath();
         }
@@ -86,7 +86,7 @@ RTexture * RResourceDB::texture(const QString& name) const
     return cit.value();
 }
 
-model3DS * RResourceDB::model(const QString& name) const
+RModel3DS * RResourceDB::model(const QString& name) const
 {
     ModsCit cit = mmodels.constFind(name);
     if(cit == mmodels.end())

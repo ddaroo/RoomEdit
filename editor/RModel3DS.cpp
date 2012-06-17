@@ -33,8 +33,8 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 namespace reditor
 {
     
-model3DS::model3DS(const char* filename,const float scale) : m_filename(filename), m_scale(scale) {
-
+RModel3DS::RModel3DS(const char* filename, const float scale) : m_filename(filename), m_scale(scale) 
+{
     std::ifstream *modelFile = new std::ifstream(filename,std::ios::in | std::ios::binary | std::ios::ate);
     QFileInfo finfo(filename);
 
@@ -92,7 +92,7 @@ model3DS::model3DS(const char* filename,const float scale) : m_filename(filename
     listsArePregenerated = false;
 }
 
-void model3DS::readChunk(std::ifstream *modelFile,  int objectStart, int objectLength) {
+void RModel3DS::readChunk(std::ifstream *modelFile,  int objectStart, int objectLength) {
     //std::cout<<std::hex<<"readChunk("<<objectStart<<"-"<<(objectStart+objectLength)<<")"<<std::dec<<std::endl;
 
     ushort chunkHeader;
@@ -478,7 +478,8 @@ void mesh3DS::sortFacesByMaterial() {
     //std::cout<<"numUnassignedFaces: "<<numUnassignedFaces<<std::endl;
 }
 
-void mesh3DS::draw(int textureID, bool pregenetateList) {
+void mesh3DS::draw(int textureID, bool pregenetateList) 
+{
 
     if (m_wave)
         ++m_waveTick;
@@ -617,8 +618,8 @@ void mesh3DS::draw(int textureID, bool pregenetateList) {
 // rysuje wszystkie siatki, pobiera jako parametr:
 // - int: id tekstury: je�li wi�ksze od 0 to wymusa automatyczne teksturowanie t� tekstur�, je�li 0 lub brak - przyjmuje teksturowanie z pliku
 // - bool: centrowanie obiektu: je�li true lub brak: za pozycj� obiektu przymuje jego geometryczny �rodek, je�li false - przyjmje wsp��rz�dne z pliku
-void model3DS::draw(int TextureID, bool centruj) {
-
+void RModel3DS::draw(int TextureID, bool centruj)
+{
     GLboolean texGenS;
     glGetBooleanv(GL_TEXTURE_GEN_S,&texGenS);
     GLboolean texGenT;
@@ -656,7 +657,7 @@ void model3DS::draw(int TextureID, bool centruj) {
 
 // ustala falowanie obiektu
 
-void model3DS::setWaved(bool wave) {
+void RModel3DS::setWaved(bool wave) {
 
     std::vector<mesh3DS>::iterator meshIter;
 

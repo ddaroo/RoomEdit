@@ -23,10 +23,11 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include "RResourceDB.h"
 #include "RModel3DS.h"
 #include "RTexture.h"
+#include "RConfig.h"
 
 namespace reditor
 {
-
+    
 RResourceDB::RResourceDB(const QString& textDir, const QString& modDir) :
     mtextDir(textDir), mmodDir(modDir), mtextures()
 { 

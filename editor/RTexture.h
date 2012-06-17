@@ -43,29 +43,25 @@ namespace reditor
 
 typedef unsigned char byte;
 
-class RTexture{
-private:
-    int m_width;
-    int m_height;
-    int m_bpp;
-    QImage::Format m_format;
-    GLuint m_id;
-    
+class RTexture{  
 public:
     RTexture(const char * filename);
-    RTexture(std::string filename)
-    {
-        RTexture(filename.c_str());
-    }
-    RTexture(const QString& filename)
-    {
-        RTexture(filename.toStdString().c_str());
-    }
+    RTexture(const QString& filename);
     
     int getWidth(){return m_width;}
     int getHeight(){return m_width;}
     int getBpp(){return m_bpp;}
     GLuint id(){return m_id;}
+    
+private:
+    // load texture from the file 
+    void load(const char * filename);
+    
+    int m_width;
+    int m_height;
+    int m_bpp;
+    QImage::Format m_format;
+    GLuint m_id;
 };
 
 } // namespace editor

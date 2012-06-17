@@ -36,13 +36,12 @@ int main(int argc, char *argv[])
     
     QApplication app(argc, argv); 
    
-    
-    reditor::REditor * edit = new reditor::REditor();
-    reditor::RMainWnd * mwnd = new reditor::RMainWnd(edit);   
+    reditor::REditor * edit = new reditor::REditor();  
+    reditor::RMainWnd * mwnd = new reditor::RMainWnd(edit);       
     edit->attachTo( static_cast<reditor::REditWnd *>(mwnd->centralWidget()) );
     mwnd->resize(800, 600);
     mwnd->show();
     rscDB.load();
-	
+    
     return app.exec();
 }

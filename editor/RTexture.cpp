@@ -62,7 +62,7 @@ RTexture::RTexture(const char * filename) :
     
     // Upload texture to card with bound texture ID
     //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, copy.bits());
-    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, m_width, m_height, GL_RGB8, GL_UNSIGNED_BYTE, copy.bits());
+    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, m_width, m_height, GL_RGB, GL_UNSIGNED_BYTE, copy.bits());
     //Q_ASSERT(glIsTexture(m_id));
 //     uchar texs[1024*1024];
 //     for(int i = 0; i < 1024*1024; ++i)

@@ -63,7 +63,7 @@ void RObjRoom::paintGL() const
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambientFloor);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specularFloor);
     glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 128);
-    glBindTexture(GL_TEXTURE_2D, rscDB.texture("floor3")->id());
+    glBindTexture(GL_TEXTURE_2D, 2);//rscDB.texture("floor3")->id());
     glColor3f(1.0f, 0.4f, 0.0f);
    
     glBegin(GL_QUADS);
@@ -82,7 +82,7 @@ void RObjRoom::paintGL() const
     GLfloat specularWalls[4] = {0.0f, 0.0f, 0.0f, 1.0f};
     glMaterialfv(GL_FRONT, GL_AMBIENT, ambientWalls);
     glMaterialfv(GL_FRONT, GL_SPECULAR, specularWalls);
-    glBindTexture(GL_TEXTURE_2D, rscDB.texture("wall4")->id());
+    glBindTexture(GL_TEXTURE_2D, 3);//rscDB.texture("wall4")->id());
     glColor3f(0.8f, 0.8f, 0.8f);
     // TODO missing functionality
 //     if (camMode == 1)

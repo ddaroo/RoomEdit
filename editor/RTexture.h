@@ -35,8 +35,14 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include <QtGui/QImage>
 #include <iostream>
 #include <fstream>
-#include "GL/gl.h"
-#include "GL/glu.h"
+
+#ifdef Q_WS_MAC
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
 
 namespace reditor
 {

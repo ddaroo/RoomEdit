@@ -26,7 +26,10 @@ namespace reditor
 {
 
 class RModel3DS;
-    
+
+/**
+ * These objects are available to users to select model and put it in the room.
+ */
 class RSceneObj : public RGridObj
 {
 public:

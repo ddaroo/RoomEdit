@@ -124,7 +124,7 @@ public:
         const float* getDiffuseColor()const{return m_diffuseColor;}
         const float* getAmbientColor()const{return m_ambientColor;}
         const float* getSpecularColor()const{return m_specularColor;}
-        const int getList()const{return m_compiledList;}
+        int getList()const{return m_compiledList;}
         float getSpecularExponent()const{return m_specularExponent;}
         float getShininess()const{return m_shininess;}
         float getOpacity()const{return m_opacity;}

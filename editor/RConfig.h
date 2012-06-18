@@ -47,6 +47,10 @@ class RConfig
         {
             return QCoreApplication::applicationDirPath().append("/data/models/").append(path).toStdString().c_str();
         }
+        /**
+         * Extension for the saved project files
+         */
+        static QString fileEditExt;
 };
     
 } // namespace reditor

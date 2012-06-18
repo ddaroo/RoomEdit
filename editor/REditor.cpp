@@ -21,6 +21,8 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 #include <QtGui/QColor>
+#include <QtGui/QFileDialog>
+#include <QtGui/QMessageBox>
 
 #ifdef Q_WS_WIN
 #  include "windows.h"
@@ -41,9 +43,10 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include "RObjRoom.h"
 #include "RObjSelection.h"
 #include "RCamera.h"
-#include "GUI/REditWnd.h"
 #include "RSceneObj.h"
 #include "RConfig.h"
+#include "GUI/REditWnd.h"
+#include "GUI/RMainWnd.h"
 
 namespace reditor
 {  
@@ -54,11 +57,12 @@ namespace reditor
 double dkX,dkY,dkZ; // TODO get rid of these global variables
 
 REditor::REditor() : mmouseX(0), mmouseY(0), mroomDimensionsPicked(false), mactiveObject(0),
-    mangle(0.1*PI/180.0), mcellSize(0.5f), mmode(DEFAULT)
+    mangle(0.1*PI/180.0), mcellSize(0.5f), mmode(DEFAULT), mdefPath(QDir::homePath()), mopenedProject(""), msavedProject(false)
 {  
     mcam = new RCamera();
     
-    addObject(new RGrid(40, QColor(Qt::white), mcellSize));
+    mgrid = new RGrid(40, QColor(Qt::white), mcellSize);
+    addObject(mgrid);
     mroom = new RObjRoom();
     msel = new RObjSelection();
 }
@@ -73,13 +77,24 @@ REditor::~REditor()
 
 void REditor::attachTo(REditWnd* wnd)
 {
-    mwnd = wnd;
+    meditorWnd = wnd;
     
-    // attach handlers for editor window events
-    connect(mwnd, SIGNAL(mousePressed(Qt::MouseButton,int,int)), this, SLOT(hmousePressed(Qt::MouseButton,int,int)));
-    connect(mwnd, SIGNAL(mouseReleased(Qt::MouseButton,int,int)), this, SLOT(hmouseReleased(Qt::MouseButton,int,int)));
-    connect(mwnd, SIGNAL(mouseMoved(int,int)), this, SLOT(hmouseMoved(int,int)));
-    connect(mwnd, SIGNAL(keyPressed(int)), this, SLOT(hkeyPressed(int)));
+    // attach handlers for editor window signals
+    connect(meditorWnd, SIGNAL(mousePressed(Qt::MouseButton,int,int)), this, SLOT(hmousePressed(Qt::MouseButton,int,int)));
+    connect(meditorWnd, SIGNAL(mouseReleased(Qt::MouseButton,int,int)), this, SLOT(hmouseReleased(Qt::MouseButton,int,int)));
+    connect(meditorWnd, SIGNAL(mouseMoved(int,int)), this, SLOT(hmouseMoved(int,int)));
+    connect(meditorWnd, SIGNAL(keyPressed(int)), this, SLOT(hkeyPressed(int)));
+}
+
+void REditor::attachToMainWnd(RMainWnd* wnd)
+{
+    mmainWnd = wnd;
+    // attach handlers for editor window signals
+    connect(mmainWnd, SIGNAL(newProject()), this, SLOT(hnewProject()));
+    connect(mmainWnd, SIGNAL(openProject()), this, SLOT(hopenProject()));
+    connect(mmainWnd, SIGNAL(saveProject()), this, SLOT(hsaveProject()));
+    connect(mmainWnd, SIGNAL(saveProjectAs()), this, SLOT(hsaveProjectAs()));
+    connect(mmainWnd, SIGNAL(helpAbout()), this, SLOT(hhelpAbout()));
 }
 
 void REditor::addObject(reditor::REditObj* obj, bool showInExplorer)
@@ -152,7 +167,7 @@ void REditor::hmouseMoved(int x, int y)
     mmouseX = x;
     mmouseY = y;
     
-    mwnd->repaint();
+    meditorWnd->repaint();
 }
 
 void REditor::hmousePressed(Qt::MouseButton b, int x, int y)
@@ -185,7 +200,7 @@ void REditor::hmousePressed(Qt::MouseButton b, int x, int y)
     
     mmouseX = x;
     mmouseY = y;
-    mwnd->repaint();
+    meditorWnd->repaint();
 }
 
 void REditor::hmouseReleased(Qt::MouseButton b, int x, int y)
@@ -207,13 +222,14 @@ void REditor::hmouseReleased(Qt::MouseButton b, int x, int y)
         addObject(mactiveObject);
         updateCoord(x, y, mcurPos);
         mactiveObject->updatePosition(mcurPos);
+        msavedProject = false;
     }
     if(b == Qt::RightButton && mmode == VIEW)
     {
         mmode = mprevMode;
     }
     
-    mwnd->repaint();
+    meditorWnd->repaint();
 }
 
 // TODO handle mouse scrolling
@@ -237,7 +253,7 @@ void REditor::hkeyPressed(int keyCode)
             mcam->upZ = 0;
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            glOrtho(-mwnd->width()/64.0, mwnd->width()/64.0, -mwnd->height()/64.0, mwnd->height()/64.0, 1.0, 60.0);
+            glOrtho(-meditorWnd->width()/64.0, meditorWnd->width()/64.0, -meditorWnd->height()/64.0, meditorWnd->height()/64.0, 1.0, 60.0);
             mcam->mode = RCamera::NORMAL;
         }
         break;
@@ -255,7 +271,7 @@ void REditor::hkeyPressed(int keyCode)
             mcam->upZ = -1;
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            glOrtho(-mwnd->width()/64.0, mwnd->width()/64.0, -mwnd->height()/64.0, mwnd->height()/64.0, 1.0, 60.0);
+            glOrtho(-meditorWnd->width()/64.0, meditorWnd->width()/64.0, -meditorWnd->height()/64.0, meditorWnd->height()/64.0, 1.0, 60.0);
             mcam->mode = RCamera::FLAT;
         }
         break;
@@ -273,7 +289,7 @@ void REditor::hkeyPressed(int keyCode)
             mcam->upZ = 0;
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            gluPerspective(45.0, (double)mwnd->width()/mwnd->height(), 1.0, 60.0);
+            gluPerspective(45.0, (double)meditorWnd->width()/meditorWnd->height(), 1.0, 60.0);
             mcam->mode = RCamera::INSIDE;
         }
         break;
@@ -288,19 +304,96 @@ void REditor::hkeyPressed(int keyCode)
         break;
     }
     
-    mwnd->repaint();
+    meditorWnd->repaint();
 }
 
-void REditor::hsave()
+void REditor::hsaveProject()
 {
-    qDebug() << "REditor::hsave()";
-    // TODO implementation
+    if(mopenedProject.isEmpty())
+    {
+        hsaveProjectAs();
+    }
+    else
+    {
+        qDebug() << "Save project " << mopenedProject;
+        // TODO save scene to the file
+        msavedProject = true;
+    } 
 }
 
-void REditor::hload()
+void REditor::hsaveProjectAs()
+{    
+    QString filePatch = QFileDialog::getSaveFileName(mmainWnd, 
+                                                     tr("Save Project as"), 
+                                                     mdefPath + QString("/roomProject.%1").arg(RConfig::fileEditExt),
+                                                     tr("Project Files *.%1 (*.%1);;All files *.* (*.*)").arg(RConfig::fileEditExt));
+    if (!filePatch.isEmpty())
+    {
+        mopenedProject = filePatch;
+        hsaveProject();
+        msavedProject = true;
+    }
+    else
+    {
+        qDebug() << "Save project canceled";
+    }
+}
+
+void REditor::hopenProject()
 {
-    qDebug() << "REditor::hload()";
-    // TODO implementation
+    if(ensureSaved())
+    {
+        QString filePatch = QFileDialog::getOpenFileName(mmainWnd, 
+                                                        tr("Open Project"),
+                                                        mdefPath, 
+                                                        tr("Project Files *.%1 (*.%1);;All files *.* (*.*)").arg(RConfig::fileEditExt));
+        if (!filePatch.isEmpty())
+        {
+            mopenedProject = filePatch;
+            mdefPath = QFileInfo(mopenedProject).dir().absolutePath();
+            msavedProject = true;
+            mroomDimensionsPicked = false;
+            qDebug() << "Open project " << mopenedProject;
+            // TODO load scene from the file
+        }
+        else
+        {
+            qDebug() << "Open project canceled";
+        }
+    }
+}
+
+void REditor::hnewProject()
+{
+    if(ensureSaved())
+    {
+        qDebug() << "New project";
+        foreach(REditObj * obj, mobjs)
+        {
+            if(obj != mroom && obj != msel && obj != mgrid)
+            {
+                delete obj;
+            }
+        }
+        mobjs.clear();
+        addObject(mgrid, false);
+        mroomDimensionsPicked = false;
+    }
+}
+
+void REditor::hshowGrid(bool show)
+{
+    mobjs.removeAll(mgrid);
+    if(show)
+    {
+        addObject(mgrid, false);
+    }
+}
+
+void REditor::hhelpAbout()
+{
+    qDebug() << "Help about";
+    QMessageBox::about(mmainWnd, tr("About RoomEdit"), tr("The <b>RoomEdit</b> is a 3D room editor. It's a student project created at the University of Science and Technology in Krakow, Poland.<br><br>Authors:<ul><li>Dariusz Jania [dariusz.jania@gmail.com]</li><li>Witold Baran [baranvtek@gmail.com]</li><li>Kacper Stasik [kacper@statis.eu]</li></ul>"));
 }
 
 void REditor::updateCoord(int x, int y, float point[])
@@ -327,6 +420,42 @@ void REditor::updateCoord(int x, int y, float point[])
     point[1] =  (end[2] + (end[2] - begin[2])*s);
     i = point[1] / mcellSize;
     point[1] = i * mcellSize;
+}
+
+bool REditor::ensureSaved()
+{
+    if(!msavedProject)
+    {
+        QMessageBox msgBox(mmainWnd);
+        msgBox.setText(tr("Project has been modified."));
+        msgBox.setInformativeText("Do you want to save your changes?");
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Save);
+        int ret = msgBox.exec();
+
+        switch (ret) {
+        case QMessageBox::Save:
+            hsaveProject();
+            return msavedProject;
+            break;
+        case QMessageBox::Discard:
+            msavedProject = true;
+            qDebug() << "ensureSaved Discard changes";
+            return true;
+            break;
+        case QMessageBox::Cancel:
+            qDebug() << "ensureSaved canceled";
+            return false;
+            break;
+        default:
+            // should never be reached
+            return false;
+            break;
+        }
+    }
+    
+    return true;
 }
 
 } /* namespace reditor */

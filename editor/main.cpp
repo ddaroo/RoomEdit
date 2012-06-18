@@ -37,8 +37,9 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv); 
    
     reditor::REditor * edit = new reditor::REditor();  
-    reditor::RMainWnd * mwnd = new reditor::RMainWnd(edit);       
+    reditor::RMainWnd * mwnd = new reditor::RMainWnd(edit);     
     edit->attachTo( static_cast<reditor::REditWnd *>(mwnd->centralWidget()) );
+    edit->attachToMainWnd(mwnd); // TODO create reditor manager class and implement all slots there to make possible multiple editor windows
     mwnd->resize(800, 600);
     mwnd->show();
     rscDB.load(reditor::RConfig::texturesDir(""), reditor::RConfig::modelsDir(""));

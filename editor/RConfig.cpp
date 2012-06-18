@@ -17,47 +17,11 @@ You should have received a copy of the GNU General Public License
 along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RMAIN_WND_H
-#define RMAIN_WND_H
-
-#include <QMainWindow>
+#include "RConfig.h"
 
 namespace reditor
 {
 
-class REditWnd;
-class RLogger;
-class REditor;
-
-class RMainWnd : public QMainWindow
-{
-    Q_OBJECT
-
-signals:
-    void newProject();
-    void openProject();
-    void saveProject();
-    void saveProjectAs();
-    void helpAbout();
-
-public:
-    RMainWnd(REditor * edit);
-    virtual ~RMainWnd();
-    /**
-     * Enable or disable save action
-     */
-    void enableSave(bool enable);
+QString RConfig::fileEditExt("r3d");
     
-private:
-    REditor * medit;
-    REditWnd * meditWnd;
-    QDockWidget * mloggerDock;
-    RLogger * mlogger;
-    
-    QAction * msaveAction;
-    QAction * msaveAsAction;
-};
-
-} /* namespace reditor */
-
-#endif /* RMAIN_WND_H */
+} // namespace reditor

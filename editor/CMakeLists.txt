@@ -25,6 +25,8 @@ set(redit_SRCS
         GUI/REditWnd.cpp
         GUI/RLogger.cpp
         GUI/RMainWnd.cpp
+        # other
+        RConfig.cpp
 )
 
 set(redit_MOC_HDRS
@@ -37,10 +39,14 @@ set(redit_MOC_HDRS
 )
 QT4_WRAP_CPP(redit_MOC_SRCS ${redit_MOC_HDRS})
 
+# prepare resources
+set(app_RES editor_resources.qrc)
+QT4_ADD_RESOURCES(app_RES_C ${app_RES})
+
 IF(UNIX)
-        add_executable(RoomEdit ${redit_SRCS} ${redit_MOC_SRCS})
+        add_executable(RoomEdit ${redit_SRCS} ${redit_MOC_SRCS} ${app_RES_C})
 ELSEIF(WIN32)
-        add_executable(RoomEdit WIN32 ${redit_SRCS} ${redit_MOC_SRCS})
+        add_executable(RoomEdit WIN32 ${redit_SRCS} ${redit_MOC_SRCS} ${app_RES_C})
 ENDIF()
 
 target_link_libraries(RoomEdit ${QT_QTMAIN_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})

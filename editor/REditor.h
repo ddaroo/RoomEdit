@@ -32,6 +32,9 @@ class RObjRoom;
 struct RCamera;
 class RObjSelection;
 class RSceneObj;
+class RMainWnd;
+class RGrid;
+
 /**
  * Implements logic of the editor.
  */
@@ -45,13 +48,17 @@ public:
     /**
      * Attach this editor to the editor window where all changes will be visualised
      */
-    void attachTo(REditWnd * wnd);    
+    void attachTo(REditWnd * wnd);
+    /**
+     * Attach signals from the main window to editor's slots
+     */
+    void attachToMainWnd(RMainWnd * wnd);
     /**
      * Returns the window this editor is attached to.
      */
     const REditWnd * editWnd() const
     {
-        return mwnd;
+        return meditorWnd;
     }
     /**
      * Adds new objects to the editor window.
@@ -93,17 +100,32 @@ public slots:
     /**
      * Save scene to the file.
      */
-    void hsave();
+    void hsaveProject();
+    /**
+     * "Save as..." scene to the file.
+     */
+    void hsaveProjectAs();
     /**
      * Load scene from the file
      */
-    void hload();
+    void hopenProject();
+    /**
+     * New scene
+     */
+    void hnewProject();
+    // TODO connect to menu signal
+    void hshowGrid(bool show);
+    void hhelpAbout();
     
 private:
     // main wnd of the editor
-    REditWnd * mwnd;
+    REditWnd * meditorWnd;
+    // main wnd of the program
+    RMainWnd * mmainWnd;
     // paintable objects
     QList<REditObj *> mobjs;
+    
+    RGrid * mgrid;
     // floor and walls of the room
     RObjRoom * mroom;
     // dynamic room size selection
@@ -132,8 +154,17 @@ private:
     enum EditMode {SELECTION, VIEW, OBJECTS, DEFAULT};
     EditMode mmode, mprevMode;
     
+    // current path to the project file
+    QString mdefPath;
+    // path to the currently opened project
+    QString mopenedProject;
+    // true when all changes are saved to the file
+    bool msavedProject;
+    
     // update selection coordinates, (x, y) - position of the mouse
     void updateCoord(int x, int y, float point[]);
+    // make sure user is aware that changes are not saved, return true when user agreed to proceed
+    bool ensureSaved();
 };
 
 } /* namespace reditor */

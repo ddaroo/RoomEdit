@@ -36,6 +36,10 @@ public:
     RSceneObj(QString name);
     virtual void paintGL() const;
     void updatePosition(float position[2]);
+    const float * position() const
+    {
+        return mpos;
+    }
     
 private:
     // current position

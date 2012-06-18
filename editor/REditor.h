@@ -116,7 +116,9 @@ private:
     // start point for the room
     float mbeginCorner[2];
     // end point for the room
-    float mendCorner[2]; 
+    float mendCorner[2];
+    // current positon of the mouse
+    float mcurPos[2];
     bool mroomDimensionsPicked;
     // currently selected object
     RSceneObj * mactiveObject;

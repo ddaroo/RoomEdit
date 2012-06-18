@@ -35,9 +35,12 @@ class RSceneObj : public RGridObj
 public:
     RSceneObj(QString name);
     virtual void paintGL() const;
+    void updatePosition(float position[2]);
     
 private:
-     RModel3DS * mmodel;
+    // current position
+    float mpos[2];
+    RModel3DS * mmodel;
 };
 
 } // namespace reditor

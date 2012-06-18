@@ -21,6 +21,7 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #define RCONFIG_H
 
 #include <QtCore/QString>
+#include <QtCore/QCoreApplication>
 
 namespace reditor
 {
@@ -34,17 +35,17 @@ class RConfig
     public:
         static const char * dataDir(const char * path)
         {
-            return QString("data/").append(path).toStdString().c_str();
+            return QCoreApplication::applicationDirPath().append("/data/").append(path).toStdString().c_str();
         }
         
         static const char * texturesDir(const char * path)
         {
-            return QString("data/textures/").append(path).toStdString().c_str();
+            return QCoreApplication::applicationDirPath().append("/data/textures/").append(path).toStdString().c_str();
         }
         
         static const char * modelsDir(const char * path)
         {
-            return QString("data/models/").append(path).toStdString().c_str();
+            return QCoreApplication::applicationDirPath().append("/data/models/").append(path).toStdString().c_str();
         }
 };
     

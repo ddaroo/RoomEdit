@@ -35,9 +35,9 @@ class RTexture;
 class RResourceDB
 {
 public:   
-    RResourceDB(const QString& textDir, const QString& modDir);
+    RResourceDB();
     virtual ~RResourceDB();
-    void load();
+    void load(const QString& textDir, const QString& modDir);
     RTexture * texture(const QString& name) const;
     RModel3DS * model(const QString& name) const;
     

@@ -28,7 +28,7 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include "GUI/REditWnd.h"
 #include "GUI/RLogger.h"
 
-reditor::RResourceDB rscDB(reditor::RConfig::texturesDir(""), reditor::RConfig::modelsDir(""));
+reditor::RResourceDB rscDB;
 
 int main(int argc, char *argv[])
 {
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     edit->attachTo( static_cast<reditor::REditWnd *>(mwnd->centralWidget()) );
     mwnd->resize(800, 600);
     mwnd->show();
-    rscDB.load();
+    rscDB.load(reditor::RConfig::texturesDir(""), reditor::RConfig::modelsDir(""));
     
     return app.exec();
 }

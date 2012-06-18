@@ -103,6 +103,9 @@ REditObj * REditor::removeObject(REditObj* obj)
 
 void REditor::hmouseMoved(int x, int y)
 {
+    // calculate current position of the mouse
+    updateCoord(x, y, mcurPos);
+    
     if(mmode == VIEW)
     {
         int dx = mmouseX - x;
@@ -134,15 +137,17 @@ void REditor::hmouseMoved(int x, int y)
             Q_ASSERT_X(false, "hmouseMoved", "bad camera mode");
         };
     }
+    
     if(mmode == SELECTION)
     {
-        updateCoord(x, y, mendCorner);
+        mendCorner[0] = mcurPos[0];
+        mendCorner[1] = mcurPos[1];
+           
         msel->updateCorners(mbeginCorner, mendCorner);
     }
     if(mmode == OBJECTS)
-    {
-        // TODO move active object
-        mactiveObject;
+    {        
+        mactiveObject->updatePosition(mcurPos);
     }
     mmouseX = x;
     mmouseY = y;
@@ -200,6 +205,8 @@ void REditor::hmouseReleased(Qt::MouseButton b, int x, int y)
     {
         mactiveObject = new RSceneObj("door"); // FIXME temporary code
         addObject(mactiveObject);
+        updateCoord(x, y, mcurPos);
+        mactiveObject->updatePosition(mcurPos);
     }
     if(b == Qt::RightButton && mmode == VIEW)
     {

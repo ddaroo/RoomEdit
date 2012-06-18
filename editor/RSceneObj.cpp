@@ -28,12 +28,19 @@ RSceneObj::RSceneObj(QString name) : RGridObj(name), mmodel(rscDB.model(name))
 {
     
 }
-
     
 void RSceneObj::paintGL() const
 {
-    // TODO object position
-    mmodel->draw();
+    glPushMatrix();
+        glTranslatef(mpos[0], 0.07f, mpos[1]);
+        mmodel->draw();
+    glPopMatrix();
+}
+
+void RSceneObj::updatePosition(float position[2])
+{
+    mpos[0] = position[0];
+    mpos[1] = position[1];
 }
 
 } // namespace reditor

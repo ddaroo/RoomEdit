@@ -28,8 +28,8 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 namespace reditor
 {
     
-RResourceDB::RResourceDB(const QString& textDir, const QString& modDir) :
-    mtextDir(textDir), mmodDir(modDir), mtextures()
+RResourceDB::RResourceDB() :
+    mtextDir(), mmodDir(), mtextures()
 { 
 
 }
@@ -47,8 +47,10 @@ RResourceDB::~RResourceDB()
 }
 
 
-void RResourceDB::load()
+void RResourceDB::load(const QString& textDir, const QString& modDir)
 {
+    mtextDir = textDir;
+    mmodDir = modDir;
     // load textures from the directory
     RTexture * tex;
     QDir tdir(mtextDir);

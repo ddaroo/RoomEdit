@@ -24,16 +24,15 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 namespace reditor
 {
 
-RSceneObj::RSceneObj(QString name) : RGridObj(name), mmodel(rscDB.model(name))
+RSceneObj::RSceneObj(QString name) : RGridObj(name), mrotation(0), mmodel(rscDB.model(name))
 {
-    mrotation = 0;
 }
     
 void RSceneObj::paintGL() const
 {
     glPushMatrix();
         glTranslatef(mpos[0], 0.07f, mpos[1]);
-    	glRotatef(mrotation, 0, 1, 0);
+        glRotatef(mrotation, 0, 1, 0);
         mmodel->draw();
     glPopMatrix();
 }

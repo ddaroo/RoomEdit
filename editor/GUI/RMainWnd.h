@@ -22,6 +22,8 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 
 #include <QMainWindow>
 
+class QButtonGroup;
+
 namespace reditor
 {
 
@@ -39,7 +41,9 @@ signals:
     void saveProject();
     void saveProjectAs();
     void helpAbout();
-
+    void showGrid(bool show);
+    void switchCamera(int mode);
+    
 public:
     RMainWnd(REditor * edit);
     virtual ~RMainWnd();
@@ -47,6 +51,11 @@ public:
      * Enable or disable save action
      */
     void enableSave(bool enable);
+    void setGridVisible(bool visible);
+    void setCamera(int mode);
+    
+protected:
+    virtual void closeEvent(QCloseEvent * event);
     
 private:
     REditor * medit;
@@ -56,6 +65,8 @@ private:
     
     QAction * msaveAction;
     QAction * msaveAsAction;
+    QAction * mshowGridAction;
+    QButtonGroup * mcameraGroup;
 };
 
 } /* namespace reditor */

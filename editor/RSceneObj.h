@@ -42,7 +42,7 @@ public:
         return mpos;
     }
     
-    const int rotation() const
+    int rotation() const
     {
         return mrotation;
     }

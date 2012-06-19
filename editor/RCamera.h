@@ -25,7 +25,7 @@ namespace reditor
 
 struct RCamera
 {
-    enum CameraMode {NORMAL, FLAT, INSIDE};
+    enum CameraMode {NORMAL = 1, FLAT, INSIDE};
     CameraMode mode;
     double kX , kY, kZ, pX, pY, pZ;
     int upX, upY, upZ;

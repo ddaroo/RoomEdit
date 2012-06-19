@@ -23,6 +23,7 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include <QtGui/QColor>
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
+#include <QtGui/QApplication>
 
 #ifdef Q_WS_WIN
 #  include "windows.h"
@@ -59,7 +60,7 @@ namespace reditor
 // camera moving
 double dkX,dkY,dkZ; // TODO get rid of these global variables
 
-REditor::REditor() : mmouseX(0), mmouseY(0), mrotation(0), mroomDimensionsPicked(false), mactiveObject(0),
+REditor::REditor() : mgridVisible(true), mmouseX(0), mmouseY(0), mrotation(0), mroomDimensionsPicked(false), mactiveObject(0),
     mangle(0.1*PI/180.0), mcellSize(0.5f), mmode(DEFAULT), mdefPath(QDir::homePath()), mopenedProject(""), msavedProject(false)
 {  
     mcam = new RCamera();
@@ -98,8 +99,10 @@ void REditor::attachToMainWnd(RMainWnd* wnd)
     connect(mmainWnd, SIGNAL(saveProject()), this, SLOT(hsaveProject()));
     connect(mmainWnd, SIGNAL(saveProjectAs()), this, SLOT(hsaveProjectAs()));
     connect(mmainWnd, SIGNAL(helpAbout()), this, SLOT(hhelpAbout()));
+    connect(mmainWnd, SIGNAL(showGrid(bool)), this, SLOT(hshowGrid(bool)));
+    connect(mmainWnd, SIGNAL(switchCamera(int)), this, SLOT(hswitchCamera(int)));
 }
-
+// FIXME after adding several objects, editor is getting laggy
 void REditor::addObject(reditor::REditObj* obj, bool showInExplorer)
 {
     Q_ASSERT_X(mobjs.indexOf(obj) == -1, "object list", "object is already on the list");
@@ -175,7 +178,7 @@ void REditor::hmouseMoved(int x, int y)
 
 void REditor::hmousePressed(Qt::MouseButton b, int x, int y)
 {
-    qDebug() << "REditor::hmousePressed " << b << ", x = " << x << ", y = " << y; 
+    //qDebug() << "REditor::hmousePressed " << b << ", x = " << x << ", y = " << y; 
     switch (b)
     {
     case Qt::RightButton:
@@ -208,7 +211,7 @@ void REditor::hmousePressed(Qt::MouseButton b, int x, int y)
 
 void REditor::hmouseReleased(Qt::MouseButton b, int x, int y)
 {
-    qDebug() << "REditor::hmouseReleased " << b << ", x = " << x << ", y = " << y;
+    //qDebug() << "REditor::hmouseReleased " << b << ", x = " << x << ", y = " << y;
     
     if(b == Qt::LeftButton && mmode == SELECTION)
     {
@@ -242,77 +245,40 @@ void REditor::hkeyPressed(int keyCode)
     qDebug() << "REditor::hkeyPressed " << keyCode;
     switch (keyCode)
     {
-    case 49: // 1
+        case Qt::Key_1: // 1
         if (mcam->mode != RCamera::NORMAL)
         {
-            mcam->kX = 0.0;
-            mcam->kY = 15.0;
-            mcam->kZ = 25.0;
-            mcam->pX = 0.0;
-            mcam->pY = 0.0;
-            mcam->pZ = 0.0;
-            mcam->upX = 0;
-            mcam->upY = 1;
-            mcam->upZ = 0;
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            glOrtho(-meditorWnd->width()/64.0, meditorWnd->width()/64.0, -meditorWnd->height()/64.0, meditorWnd->height()/64.0, 1.0, 30.0);
-            mcam->mode = RCamera::NORMAL;
+            hswitchCamera(RCamera::NORMAL);
         }
         break;
-    case 50: // 2
+    case Qt::Key_2: // 2
         if (mcam->mode != RCamera::FLAT)
         {
-            mcam->kX = 0.0;
-            mcam->kY = 10.0;
-            mcam->kZ = 0.0;
-            mcam->pX = 0.0;
-            mcam->pY = 0.0;
-            mcam->pZ = 0.0;
-            mcam->upX = 0;
-            mcam->upY = 0;
-            mcam->upZ = -1;
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            glOrtho(-meditorWnd->width()/64.0, meditorWnd->width()/64.0, -meditorWnd->height()/64.0, meditorWnd->height()/64.0, 1.0, 60.0);
-            mcam->mode = RCamera::FLAT;
+            hswitchCamera(RCamera::FLAT);
         }
         break;
-    case 51: // 3
+    case Qt::Key_3: // 3
         if (mcam->mode != RCamera::INSIDE)
         {
-            mcam->kX = 0.0;
-            mcam->kY = 1.72;
-            mcam->kZ = 0.0;
-            mcam->pX = 0.0;
-            mcam->pY = 2.0;
-            mcam->pZ = 100.0;
-            mcam->upX = 0;
-            mcam->upY = 1;
-            mcam->upZ = 0;
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            gluPerspective(45.0, (double)meditorWnd->width()/meditorWnd->height(), 1.0, 60.0);
-            mcam->mode = RCamera::INSIDE;
+            hswitchCamera(RCamera::INSIDE);
         }
         break;
-    case 82:
-    	if(mmode == OBJECTS)
-		{
-        	mrotation += ROTATION_STEP;
-        	mrotation = mrotation%360;
+    case Qt::Key_R:
+        if (mmode == OBJECTS)
+        {
+            mrotation += ROTATION_STEP;
+            mrotation = mrotation%360;
 
-    		mactiveObject->updateRotation(mrotation);
-			mactiveObject->updatePosition(mcurPos);
-		}
+            mactiveObject->updateRotation(mrotation);
+            mactiveObject->updatePosition(mcurPos);
+        }
 
-    	break;
-    case 27:
-        exit(1);
         break;
-    case 71:
-    case 103:
-        qDebug() << "Grid";
+    case Qt::Key_Escape:
+        QApplication::exit(0);
+        break;
+    case Qt::Key_G:
+        hshowGrid(!mgridVisible);
         break;
     default:
         break;
@@ -411,6 +377,76 @@ void REditor::clearProject()
     mroomDimensionsPicked = false;
 }
 
+void REditor::hcloseProgram()
+{
+    if(ensureSaved())
+    {
+        QApplication::exit(0);
+    }
+}
+
+void REditor::hswitchCamera(int mode)
+{
+    if(mode == mcam->mode)
+    {
+        return;
+    }
+        
+    switch(mode)
+    {
+        case RCamera::NORMAL:
+            mcam->kX = 0.0;
+            mcam->kY = 15.0;
+            mcam->kZ = 25.0;
+            mcam->pX = 0.0;
+            mcam->pY = 0.0;
+            mcam->pZ = 0.0;
+            mcam->upX = 0;
+            mcam->upY = 1;
+            mcam->upZ = 0;
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(-meditorWnd->width()/64.0, meditorWnd->width()/64.0, -meditorWnd->height()/64.0, meditorWnd->height()/64.0, 1.0, 60.0);
+            mcam->mode = RCamera::NORMAL;
+            break;
+            
+        case RCamera::FLAT:
+            mcam->kX = 0.0;
+            mcam->kY = 10.0;
+            mcam->kZ = 0.0;
+            mcam->pX = 0.0;
+            mcam->pY = 0.0;
+            mcam->pZ = 0.0;
+            mcam->upX = 0;
+            mcam->upY = 0;
+            mcam->upZ = -1;
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(-meditorWnd->width()/64.0, meditorWnd->width()/64.0, -meditorWnd->height()/64.0, meditorWnd->height()/64.0, 1.0, 60.0);
+            mcam->mode = RCamera::FLAT;
+            break;
+            
+        case RCamera::INSIDE:
+            mcam->kX = 0.0;
+            mcam->kY = 1.72;
+            mcam->kZ = 0.0;
+            mcam->pX = 0.0;
+            mcam->pY = 2.0;
+            mcam->pZ = 100.0;
+            mcam->upX = 0;
+            mcam->upY = 1;
+            mcam->upZ = 0;
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            gluPerspective(45.0, (double)meditorWnd->width()/meditorWnd->height(), 1.0, 60.0);
+            mcam->mode = RCamera::INSIDE;
+            break;
+    }
+    mmainWnd->setCamera(mode);
+    meditorWnd->repaint();
+    qDebug() << "Switch camera: " << mode;
+}
+
 void REditor::hshowGrid(bool show)
 {
     mobjs.removeAll(mgrid);
@@ -418,6 +454,9 @@ void REditor::hshowGrid(bool show)
     {
         addObject(mgrid, false);
     }
+    mgridVisible = show;
+    mmainWnd->setGridVisible(show);
+    qDebug() << "Show grid " << mgridVisible;
 }
 
 void REditor::hhelpAbout()

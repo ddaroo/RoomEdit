@@ -115,6 +115,11 @@ public slots:
      * New scene
      */
     void hnewProject();
+    /**
+     * Ask user to save edited scene and close the program.
+     */
+    void hcloseProgram();
+    void hswitchCamera(int mode);
     // TODO connect to menu signal
     void hshowGrid(bool show);
     void hhelpAbout();
@@ -128,6 +133,7 @@ private:
     QList<REditObj *> mobjs;
     
     RGrid * mgrid;
+    bool mgridVisible;
     // floor and walls of the room
     RObjRoom * mroom;
     // dynamic room size selection

@@ -21,6 +21,9 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include <QtGui/QAction>
 #include <QtGui/QMenuBar>
 #include <QtGui/QToolBar>
+#include <QtGui/QButtonGroup>
+#include <QtGui/QPushButton>
+#include <QtGui/QCloseEvent>
 
 #include "RMainWnd.h"
 #include "REditWnd.h"
@@ -29,7 +32,7 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 
 namespace reditor
 {
-
+  
 RMainWnd::RMainWnd(reditor::REditor* edit) : QMainWindow(), medit(edit)
 {
     setWindowTitle(tr("Room Editor"));
@@ -66,25 +69,49 @@ RMainWnd::RMainWnd(reditor::REditor* edit) : QMainWindow(), medit(edit)
     msaveAsAction = fileMenu->addAction(tr("S&ave Project As..."), this, SIGNAL(saveProjectAs()), Qt::SHIFT + Qt::CTRL + Qt::Key_S);
     msaveAsAction->setIcon(QIcon(":/resources/saveAs.png"));
     enableSave(false); // activate after user makes some changes, no sense to save empty project
+    fileMenu->addSeparator();
+    fileMenu->addAction(tr("&Exit.."), this, SLOT(close()), QKeySequence::Quit);
     
     // View menu
     QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
-    QAction* showGridAction = viewMenu->addAction(tr("&Show grid"));
+    mshowGridAction = viewMenu->addAction(tr("&Show grid"));
+    mshowGridAction->setCheckable(true);
+    mshowGridAction->setChecked(true);
+    connect(mshowGridAction, SIGNAL(toggled(bool)), this, SIGNAL(showGrid(bool)));
     // TODO implementation
     // - dock widgets visibility
     // - grid visibility
     
     // Help menu
     QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
-    QAction* aboutAction = helpMenu->addAction(tr("&About RoomEdit"), this, SIGNAL(helpAbout()));
+    helpMenu->addAction(tr("&About RoomEdit"), this, SIGNAL(helpAbout()));
     
-    // toolbar
+    // File toolbar
     QToolBar* fileToolBar = addToolBar(tr("File"));
     fileToolBar->addAction(newAction);
     fileToolBar->addAction(openAction);
     fileToolBar->addSeparator();
     fileToolBar->addAction(msaveAction);
     fileToolBar->addAction(msaveAsAction);
+    
+    // Camera view toolbar
+    QToolBar* cameraToolBar = addToolBar(tr("Camera"));
+    mcameraGroup = new QButtonGroup(cameraToolBar);
+    QPushButton * cam1 = new QPushButton(QString("1"), this);
+    QPushButton * cam2 = new QPushButton(QString("2"), this);
+    QPushButton * cam3 = new QPushButton(QString("3"), this);
+    cam1->setCheckable(true);
+    cam2->setCheckable(true);
+    cam3->setCheckable(true);
+    cam1->setChecked(true);
+    mcameraGroup->addButton(cam1, 1);
+    mcameraGroup->addButton(cam2, 2);
+    mcameraGroup->addButton(cam3, 3);
+    mcameraGroup->setExclusive(true);
+    connect(mcameraGroup, SIGNAL(buttonClicked(int)), this, SIGNAL(switchCamera(int)));
+    cameraToolBar->addWidget(cam1);
+    cameraToolBar->addWidget(cam2);
+    cameraToolBar->addWidget(cam3);
 }
 
 RMainWnd::~RMainWnd()
@@ -94,6 +121,21 @@ RMainWnd::~RMainWnd()
 void RMainWnd::enableSave(bool enable)
 {
     msaveAction->setEnabled(enable);
+}
+
+void RMainWnd::setGridVisible(bool visible)
+{
+    mshowGridAction->setChecked(visible);
+}
+
+void RMainWnd::setCamera(int mode)
+{
+    mcameraGroup->button(mode)->setChecked(true);
+}
+
+void RMainWnd::closeEvent(QCloseEvent* event)
+{
+    // TODO ensure all changes are saved
 }
 
 } /* namespace reditor */

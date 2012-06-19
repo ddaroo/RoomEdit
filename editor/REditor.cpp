@@ -45,6 +45,7 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include "RCamera.h"
 #include "RSceneObj.h"
 #include "RConfig.h"
+#include "RProject.h"
 #include "GUI/REditWnd.h"
 #include "GUI/RMainWnd.h"
 
@@ -220,7 +221,7 @@ void REditor::hmouseReleased(Qt::MouseButton b, int x, int y)
     }
     if(b == Qt::LeftButton && mmode == OBJECTS)
     {
-        mactiveObject = new RSceneObj("table2"); // FIXME temporary code
+        mactiveObject = new RSceneObj("shelf"); // FIXME temporary code
         addObject(mactiveObject);
         updateCoord(x, y, mcurPos);
         mactiveObject->updatePosition(mcurPos);
@@ -255,7 +256,7 @@ void REditor::hkeyPressed(int keyCode)
             mcam->upZ = 0;
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            glOrtho(-meditorWnd->width()/64.0, meditorWnd->width()/64.0, -meditorWnd->height()/64.0, meditorWnd->height()/64.0, 1.0, 60.0);
+            glOrtho(-meditorWnd->width()/64.0, meditorWnd->width()/64.0, -meditorWnd->height()/64.0, meditorWnd->height()/64.0, 1.0, 30.0);
             mcam->mode = RCamera::NORMAL;
         }
         break;
@@ -331,6 +332,9 @@ void REditor::hsaveProject()
         qDebug() << "Save project " << mopenedProject;
         // TODO save scene to the file
         msavedProject = true;
+
+        RProject * project = new RProject( mopenedProject );
+        project->save( this );
     } 
 }
 
@@ -345,6 +349,9 @@ void REditor::hsaveProjectAs()
         mopenedProject = filePatch;
         hsaveProject();
         msavedProject = true;
+
+        RProject * project = new RProject( mopenedProject );
+        project->save( this );
     }
     else
     {
@@ -367,7 +374,9 @@ void REditor::hopenProject()
             msavedProject = true;
             mroomDimensionsPicked = false;
             qDebug() << "Open project " << mopenedProject;
-            // TODO load scene from the file
+
+            RProject * project = new RProject( mopenedProject );
+            project->load( this );
         }
         else
         {
@@ -381,17 +390,25 @@ void REditor::hnewProject()
     if(ensureSaved())
     {
         qDebug() << "New project";
-        foreach(REditObj * obj, mobjs)
-        {
-            if(obj != mroom && obj != msel && obj != mgrid)
-            {
-                delete obj;
-            }
-        }
-        mobjs.clear();
-        addObject(mgrid, false);
-        mroomDimensionsPicked = false;
+
+        clearProject();
     }
+}
+
+void REditor::clearProject()
+{
+	foreach(REditObj * obj, mobjs)
+	{
+	    if(obj != mroom && obj != msel && obj != mgrid)
+	    {
+	    	delete obj;
+	    }
+	}
+
+	mobjs.clear();
+
+    addObject(mgrid, false);
+    mroomDimensionsPicked = false;
 }
 
 void REditor::hshowGrid(bool show)

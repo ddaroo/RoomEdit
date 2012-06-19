@@ -60,6 +60,8 @@ public:
     {
         return meditorWnd;
     }
+    //
+    void clearProject();
     /**
      * Adds new objects to the editor window.
      */

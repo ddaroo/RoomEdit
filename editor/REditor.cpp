@@ -48,15 +48,17 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include "GUI/REditWnd.h"
 #include "GUI/RMainWnd.h"
 
+
 namespace reditor
 {  
     
 #define PI 3.14159265
+#define ROTATION_STEP 45
 
 // camera moving
 double dkX,dkY,dkZ; // TODO get rid of these global variables
 
-REditor::REditor() : mmouseX(0), mmouseY(0), mroomDimensionsPicked(false), mactiveObject(0), mrotation(0),
+REditor::REditor() : mmouseX(0), mmouseY(0), mrotation(0), mroomDimensionsPicked(false), mactiveObject(0),
     mangle(0.1*PI/180.0), mcellSize(0.5f), mmode(DEFAULT), mdefPath(QDir::homePath()), mopenedProject(""), msavedProject(false)
 {  
     mcam = new RCamera();
@@ -296,7 +298,7 @@ void REditor::hkeyPressed(int keyCode)
     case 82:
     	if(mmode == OBJECTS)
 		{
-        	mrotation += 90;
+        	mrotation += ROTATION_STEP;
         	mrotation = mrotation%360;
 
     		mactiveObject->updateRotation(mrotation);

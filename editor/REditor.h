@@ -141,6 +141,10 @@ private:
     float mendCorner[2];
     // current positon of the mouse
     float mcurPos[2];
+
+    // rotation of element
+    int mrotation;
+
     bool mroomDimensionsPicked;
     // currently selected object
     RSceneObj * mactiveObject;

@@ -26,13 +26,14 @@ namespace reditor
 
 RSceneObj::RSceneObj(QString name) : RGridObj(name), mmodel(rscDB.model(name))
 {
-    
+    mrotation = 0;
 }
     
 void RSceneObj::paintGL() const
 {
     glPushMatrix();
         glTranslatef(mpos[0], 0.07f, mpos[1]);
+    	glRotatef(mrotation, 0, 1, 0);
         mmodel->draw();
     glPopMatrix();
 }
@@ -42,5 +43,11 @@ void RSceneObj::updatePosition(float position[2])
     mpos[0] = position[0];
     mpos[1] = position[1];
 }
+
+void RSceneObj::updateRotation(int r)
+{
+	mrotation = r;
+}
+
 
 } // namespace reditor

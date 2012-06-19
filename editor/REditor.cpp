@@ -56,7 +56,7 @@ namespace reditor
 // camera moving
 double dkX,dkY,dkZ; // TODO get rid of these global variables
 
-REditor::REditor() : mmouseX(0), mmouseY(0), mroomDimensionsPicked(false), mactiveObject(0),
+REditor::REditor() : mmouseX(0), mmouseY(0), mroomDimensionsPicked(false), mactiveObject(0), mrotation(0),
     mangle(0.1*PI/180.0), mcellSize(0.5f), mmode(DEFAULT), mdefPath(QDir::homePath()), mopenedProject(""), msavedProject(false)
 {  
     mcam = new RCamera();
@@ -218,7 +218,7 @@ void REditor::hmouseReleased(Qt::MouseButton b, int x, int y)
     }
     if(b == Qt::LeftButton && mmode == OBJECTS)
     {
-        mactiveObject = new RSceneObj("door"); // FIXME temporary code
+        mactiveObject = new RSceneObj("table2"); // FIXME temporary code
         addObject(mactiveObject);
         updateCoord(x, y, mcurPos);
         mactiveObject->updatePosition(mcurPos);
@@ -293,6 +293,17 @@ void REditor::hkeyPressed(int keyCode)
             mcam->mode = RCamera::INSIDE;
         }
         break;
+    case 82:
+    	if(mmode == OBJECTS)
+		{
+        	mrotation += 90;
+        	mrotation = mrotation%360;
+
+    		mactiveObject->updateRotation(mrotation);
+			mactiveObject->updatePosition(mcurPos);
+		}
+
+    	break;
     case 27:
         exit(1);
         break;

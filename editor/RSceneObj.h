@@ -36,14 +36,21 @@ public:
     RSceneObj(QString name);
     virtual void paintGL() const;
     void updatePosition(float position[2]);
+    void updateRotation( int rotation );
     const float * position() const
     {
         return mpos;
     }
     
+    const int rotation() const
+    {
+        return mrotation;
+    }
+
 private:
     // current position
     float mpos[2];
+    int mrotation;
     RModel3DS * mmodel;
 };
 

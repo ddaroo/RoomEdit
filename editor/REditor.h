@@ -81,6 +81,10 @@ public:
     {
         return mcam;
     }
+
+    bool inObjectsMode(){
+    	return mmode == OBJECTS;
+    }
     
 public slots:
     /**

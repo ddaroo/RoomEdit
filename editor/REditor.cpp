@@ -224,7 +224,7 @@ void REditor::hmouseReleased(Qt::MouseButton b, int x, int y)
     }
     if(b == Qt::LeftButton && mmode == OBJECTS)
     {
-        mactiveObject = new RSceneObj("shelf"); // FIXME temporary code
+        mactiveObject = new RSceneObj("board"); // FIXME temporary code
         addObject(mactiveObject);
         updateCoord(x, y, mcurPos);
         mactiveObject->updatePosition(mcurPos);
@@ -301,6 +301,7 @@ void REditor::hsaveProject()
 
         RProject * project = new RProject( mopenedProject );
         project->save( this );
+        delete project;
     } 
 }
 
@@ -318,6 +319,7 @@ void REditor::hsaveProjectAs()
 
         RProject * project = new RProject( mopenedProject );
         project->save( this );
+        delete project;
     }
     else
     {
@@ -343,6 +345,7 @@ void REditor::hopenProject()
 
             RProject * project = new RProject( mopenedProject );
             project->load( this );
+            delete project;
         }
         else
         {

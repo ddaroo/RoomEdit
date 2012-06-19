@@ -21,6 +21,7 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #define RProject_H
 
 #include <QtCore/QString>
+#include <QtCore/QList>
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtCore/QDataStream>

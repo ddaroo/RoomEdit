@@ -86,8 +86,13 @@ void RProject::save( REditor *editor ){
 	file.open( QIODevice::WriteOnly );
 	QDataStream out( &file );
 
-	foreach(REditObj* obj, ( *editor->objects() ) )
+	QList<REditObj *> list = ( *editor->objects() );
+
+	foreach(REditObj* obj, list )
 	{
+		if( editor->inObjectsMode() && obj == list.last() )
+			break;
+
 		// TODO: Objects refactoring
 		RSceneObj *sobj = dynamic_cast<RSceneObj *>( obj );
 		RGridObj  *gobj  = dynamic_cast<RGridObj *>( obj );

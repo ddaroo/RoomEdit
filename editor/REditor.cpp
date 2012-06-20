@@ -223,7 +223,6 @@ void REditor::hmouseReleased(Qt::MouseButton b, int x, int y)
         mroomDimensionsPicked = true;
         
         mmode = OBJECTS;
-        mactiveObject = new RSceneObj("board");
     }
     if(b == Qt::LeftButton && mmode == OBJECTS && mactiveObject != NULL)
     {
@@ -340,7 +339,9 @@ void REditor::hopenProject()
             mopenedProject = filePatch;
             mdefPath = QFileInfo(mopenedProject).dir().absolutePath();
             msavedProject = true;
-            mroomDimensionsPicked = false;
+            mmode = OBJECTS;
+            mactiveObject = NULL;
+            mroomDimensionsPicked = true;
             qDebug() << "Open project " << mopenedProject;
 
             RProject * project = new RProject( mopenedProject );

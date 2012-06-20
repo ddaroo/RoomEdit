@@ -230,6 +230,7 @@ void REditor::hmouseReleased(Qt::MouseButton b, int x, int y)
         addObject(mactiveObject);
         updateCoord(x, y, mcurPos);
         mactiveObject->updatePosition(mcurPos);
+        mactiveObject->updateRotation(mrotation);
         msavedProject = false;
     }
     if(b == Qt::RightButton && mmode == VIEW)

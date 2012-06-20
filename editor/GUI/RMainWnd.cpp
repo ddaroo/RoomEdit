@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QtCore/QDebug>
 #include <QtGui/QDockWidget>
 #include <QtGui/QAction>
 #include <QtGui/QMenuBar>
@@ -24,11 +25,17 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include <QtGui/QButtonGroup>
 #include <QtGui/QPushButton>
 #include <QtGui/QCloseEvent>
+#include <QtGui/QGridLayout>
+#include <QtGui/QLayout>
+#include <QtGui/QGroupBox>
 
 #include "RMainWnd.h"
 #include "REditWnd.h"
 #include "RLogger.h"
 #include "REditor.h"
+#include "global.h"
+#include "RResourceDB.h"
+#include "RSceneObjPicker.h"
 
 namespace reditor
 {
@@ -54,7 +61,6 @@ RMainWnd::RMainWnd(reditor::REditor* edit) : QMainWindow(), medit(edit)
     mlogger = new RLogger(mloggerDock);
     mloggerDock->setWidget(mlogger);
     addDockWidget(Qt::BottomDockWidgetArea, mloggerDock);
-    // TODO attach dock window with available objects
     // TODO attach dock window with objects on the scene
     
     // File menu
@@ -71,16 +77,6 @@ RMainWnd::RMainWnd(reditor::REditor* edit) : QMainWindow(), medit(edit)
     enableSave(false); // activate after user makes some changes, no sense to save empty project
     fileMenu->addSeparator();
     fileMenu->addAction(tr("&Exit.."), this, SLOT(close()), QKeySequence::Quit);
-    
-    // View menu
-    QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
-    mshowGridAction = viewMenu->addAction(tr("&Show grid"));
-    mshowGridAction->setCheckable(true);
-    mshowGridAction->setChecked(true);
-    connect(mshowGridAction, SIGNAL(toggled(bool)), this, SIGNAL(showGrid(bool)));
-    // TODO implementation
-    // - dock widgets visibility
-    // - grid visibility
     
     // Help menu
     QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
@@ -135,7 +131,64 @@ void RMainWnd::setCamera(int mode)
 
 void RMainWnd::closeEvent(QCloseEvent* event)
 {
-    // TODO ensure all changes are saved
+    event->ignore();
+    emit closeProgram();
+}
+
+void RMainWnd::initObjPickers()
+{
+    RResourceDB::Mods mods = rscDB.models();
+    RSceneObjPicker * picker;
+    
+    mpickerDock = new QDockWidget(this);
+    mpickerDock->setWindowTitle("Available Objects");
+    
+    QGridLayout * l = new QGridLayout;
+    QGroupBox * g = new QGroupBox(mpickerDock);
+    
+    // attach models
+    int i = 0;
+    int k = 0;
+    for(RResourceDB::ModsCit cit = mods.begin(); cit != mods.end(); ++cit)
+    {
+        picker = new RSceneObjPicker(cit.key(), mpickerDock);
+        picker->setFixedSize(100, 100);
+        connect(picker, SIGNAL(selected(QString)), this, SIGNAL(objSelected(QString)));
+        l->addWidget(picker, k, i%2);
+        i++;
+        if(i%2 == 0)
+        {
+            ++k;
+        }
+    }
+    
+    l->setRowStretch(i, 1000);
+    g->setLayout(l);
+    
+    mpickerDock->setWidget(g);
+    mpickerDock->setMinimumWidth(250);
+    addDockWidget(Qt::LeftDockWidgetArea, mpickerDock);
+    
+    
+    // View menu
+    mviewMenu = menuBar()->addMenu(tr("&View"));
+    mshowGridAction = mviewMenu->addAction(tr("&Show grid"));
+    mshowGridAction->setCheckable(true);
+    mshowGridAction->setChecked(true);
+    connect(mshowGridAction, SIGNAL(toggled(bool)), this, SIGNAL(showGrid(bool)));
+    // view menu - dockable windows
+    QMenu * docksMenu = mviewMenu->addMenu(tr("&Dockable Windows"));
+    QAction * editorLogAction = docksMenu->addAction(tr("&Editor Log"));
+    editorLogAction->setCheckable(true);
+    editorLogAction->setChecked(true);
+    connect(editorLogAction, SIGNAL(toggled(bool)), mloggerDock, SLOT(setVisible(bool)));
+    connect(mloggerDock, SIGNAL(visibilityChanged(bool)), editorLogAction, SLOT(setChecked(bool)));
+    // --
+    QAction * pickerAction = docksMenu->addAction(tr("&Available Objects"));
+    pickerAction->setCheckable(true);
+    pickerAction->setChecked(true);
+    connect(pickerAction, SIGNAL(toggled(bool)), mpickerDock, SLOT(setVisible(bool)));
+    connect(mpickerDock, SIGNAL(visibilityChanged(bool)), pickerAction, SLOT(setChecked(bool)));
 }
 
 } /* namespace reditor */

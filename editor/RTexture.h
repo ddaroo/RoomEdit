@@ -51,8 +51,8 @@ typedef unsigned char byte;
 
 class RTexture{  
 public:
-    RTexture(const char * filename);
-    RTexture(const QString& filename);
+    explicit RTexture(const char * filename);
+    explicit RTexture(const QString& filename);
     
     int getWidth(){return m_width;}
     int getHeight(){return m_width;}

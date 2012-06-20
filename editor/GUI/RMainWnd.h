@@ -43,9 +43,11 @@ signals:
     void helpAbout();
     void showGrid(bool show);
     void switchCamera(int mode);
+    void objSelected(QString modelName);
+    void closeProgram();
     
 public:
-    RMainWnd(REditor * edit);
+    explicit RMainWnd(REditor * edit);
     virtual ~RMainWnd();
     /**
      * Enable or disable save action
@@ -54,14 +56,18 @@ public:
     void setGridVisible(bool visible);
     void setCamera(int mode);
     
+    void initObjPickers();
+    
 protected:
     virtual void closeEvent(QCloseEvent * event);
     
-private:
+private:   
     REditor * medit;
     REditWnd * meditWnd;
     QDockWidget * mloggerDock;
     RLogger * mlogger;
+    QDockWidget * mpickerDock;
+    QMenu* mviewMenu;
     
     QAction * msaveAction;
     QAction * msaveAsAction;

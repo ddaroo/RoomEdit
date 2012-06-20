@@ -30,7 +30,7 @@ namespace reditor
 class RGridObj : public REditObj
 {  
 public:
-    RGridObj(QString name);
+    explicit RGridObj(QString name);
     RGridObj(QString name, int x, int y, int width, int height);
     virtual ~RGridObj();
     virtual void paintGL() const = 0;

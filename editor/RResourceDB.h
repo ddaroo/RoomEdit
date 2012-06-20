@@ -34,12 +34,20 @@ class RTexture;
  */
 class RResourceDB
 {
-public:   
+public:
+    typedef QMap<QString, RModel3DS *> Mods;
+    typedef QMap<QString, RModel3DS *>::const_iterator ModsCit;
+    typedef QMap<QString, RModel3DS *>::const_iterator ModsIt;
+    
     RResourceDB();
     virtual ~RResourceDB();
     void load(const QString& textDir, const QString& modDir);
     RTexture * texture(const QString& name) const;
     RModel3DS * model(const QString& name) const;
+    Mods models()
+    {
+        return mmodels;
+    }
     
 private:
     QString mtextDir, mmodDir;
@@ -49,9 +57,7 @@ private:
     typedef QMap<QString, RTexture *>::iterator TexsIt;
     Texs mtextures;
     
-    typedef QMap<QString, RModel3DS *> Mods;
-    typedef QMap<QString, RModel3DS *>::const_iterator ModsCit;
-    typedef QMap<QString, RModel3DS *>::const_iterator ModsIt;
+    
     Mods mmodels;
 };
 

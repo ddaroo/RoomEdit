@@ -45,7 +45,7 @@ void RSceneObj::updatePosition(float position[2])
 
 void RSceneObj::updateRotation(int r)
 {
-	mrotation = r;
+    mrotation = r;
 }
 
 

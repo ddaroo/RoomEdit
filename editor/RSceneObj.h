@@ -33,7 +33,7 @@ class RModel3DS;
 class RSceneObj : public RGridObj
 {
 public:
-    RSceneObj(QString name);
+    explicit RSceneObj(QString name);
     virtual void paintGL() const;
     void updatePosition(float position[2]);
     void updateRotation( int rotation );

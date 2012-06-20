@@ -59,7 +59,7 @@ namespace reditor
 // camera moving
 double dkX,dkY,dkZ; // TODO get rid of these global variables
 
-REditor::REditor() : mgridVisible(true), mmouseX(0), mmouseY(0), mrotation(0), mroomDimensionsPicked(false), mactiveObject(0),
+REditor::REditor() : mgridVisible(true), mmouseX(0), mmouseY(0), mrotation(0), mroomDimensionsPicked(false), mactiveObject(NULL),
     mangle(0.1*PI/180.0), mcellSize(0.5f), mmode(DEFAULT), mdefPath(QDir::homePath()), mopenedProject(""), msavedProject(false)
 {  
     mcam = new RCamera();
@@ -100,6 +100,8 @@ void REditor::attachToMainWnd(RMainWnd* wnd)
     connect(mmainWnd, SIGNAL(helpAbout()), this, SLOT(hhelpAbout()));
     connect(mmainWnd, SIGNAL(showGrid(bool)), this, SLOT(hshowGrid(bool)));
     connect(mmainWnd, SIGNAL(switchCamera(int)), this, SLOT(hswitchCamera(int)));
+    connect(mmainWnd, SIGNAL(closeProgram()), this, SLOT(hcloseProgram()));
+    connect(mmainWnd, SIGNAL(objSelected(QString)), this, SLOT(hobjSelected(QString)));
 }
 // FIXME after adding several objects, editor is getting laggy
 void REditor::addObject(reditor::REditObj* obj, bool showInExplorer)
@@ -165,8 +167,8 @@ void REditor::hmouseMoved(int x, int y)
            
         msel->updateCorners(mbeginCorner, mendCorner);
     }
-    if(mmode == OBJECTS)
-    {        
+    if(mmode == OBJECTS && mactiveObject != NULL)
+    {   
         mactiveObject->updatePosition(mcurPos);
     }
     mmouseX = x;
@@ -220,10 +222,11 @@ void REditor::hmouseReleased(Qt::MouseButton b, int x, int y)
         mroomDimensionsPicked = true;
         
         mmode = OBJECTS;
+        mactiveObject = new RSceneObj("board");
     }
-    if(b == Qt::LeftButton && mmode == OBJECTS)
+    if(b == Qt::LeftButton && mmode == OBJECTS && mactiveObject != NULL)
     {
-        mactiveObject = new RSceneObj("table2"); // FIXME temporary code
+        mactiveObject = new RSceneObj(mactiveObject->name());
         addObject(mactiveObject);
         updateCoord(x, y, mcurPos);
         mactiveObject->updatePosition(mcurPos);
@@ -244,24 +247,18 @@ void REditor::hkeyPressed(int keyCode)
     qDebug() << "REditor::hkeyPressed " << keyCode;
     switch (keyCode)
     {
-        case Qt::Key_1: // 1
-        if (mcam->mode != RCamera::NORMAL)
-        {
-            hswitchCamera(RCamera::NORMAL);
-        }
+    case Qt::Key_1:
+        hswitchCamera(RCamera::NORMAL);
         break;
-    case Qt::Key_2: // 2
-        if (mcam->mode != RCamera::FLAT)
-        {
-            hswitchCamera(RCamera::FLAT);
-        }
+
+    case Qt::Key_2:
+        hswitchCamera(RCamera::FLAT);
         break;
-    case Qt::Key_3: // 3
-        if (mcam->mode != RCamera::INSIDE)
-        {
-            hswitchCamera(RCamera::INSIDE);
-        }
+
+    case Qt::Key_3:
+        hswitchCamera(RCamera::INSIDE);
         break;
+
     case Qt::Key_R:
         if (mmode == OBJECTS)
         {
@@ -273,16 +270,19 @@ void REditor::hkeyPressed(int keyCode)
         }
 
         break;
+
     case Qt::Key_Escape:
         QApplication::exit(0);
         break;
+
     case Qt::Key_G:
         hshowGrid(!mgridVisible);
         break;
+
     default:
         break;
     }
-    
+
     meditorWnd->repaint();
 }
 
@@ -446,6 +446,19 @@ void REditor::hhelpAbout()
 {
     qDebug() << "Help about";
     QMessageBox::about(mmainWnd, tr("About RoomEdit"), tr("The <b>RoomEdit</b> is a 3D room editor. It's a student project created at the University of Science and Technology in Krakow, Poland.<br><br>Authors:<ul><li>Dariusz Jania [dariusz.jania@gmail.com]</li><li>Witold Baran [baranvtek@gmail.com]</li><li>Kacper Stasik [kacper@statis.eu]</li></ul>"));
+}
+
+void REditor::hobjSelected(QString modelName)
+{
+    if(mmode == OBJECTS)
+    {
+        if(mactiveObject != NULL)
+        {
+            delete removeObject(mactiveObject);
+        }
+        mactiveObject = new RSceneObj(modelName);
+        addObject(mactiveObject);
+    }
 }
 
 void REditor::updateCoord(int x, int y, float point[])

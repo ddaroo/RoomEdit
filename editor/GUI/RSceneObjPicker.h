@@ -17,36 +17,42 @@ You should have received a copy of the GNU General Public License
 along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RLOGGER_H
-#define RLOGGER_H
+#ifndef RSCENE_OBJ_PICKER_H
+#define RSCENE_OBJ_PICKER_H
 
-#include <QtGui/QTextEdit>
-
-class QTimer;
-
-/**
- * Every message sent by "qDebug() << msg;" goes throw this function as well as warnings, errors etc.
- */
-void msgOutput(QtMsgType type, const char *msg);   
+#include <QGLWidget>
 
 namespace reditor
 {
 
-class RLogger : public QTextEdit
+class RModel3DS;
+    
+class RSceneObjPicker : public QGLWidget
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
-    explicit RLogger(QWidget * parent);
-    virtual ~RLogger();
+    RSceneObjPicker(const QString& modelName, QWidget *parent = 0);
+    virtual ~RSceneObjPicker();
 
-private slots:
-    void hlogMsgs();
+signals:
+    void selected(QString modelName);
 
+protected:
+    void initializeGL();
+    void paintGL();
+    void enterEvent(QEvent * event);
+    void leaveEvent(QEvent * event);
+    void mouseReleaseEvent(QMouseEvent * event);
+    
 private:
-    QTimer * mtimer;
+    // starts/stops animation
+    void animate(bool animate);
+    
+    RModel3DS * mmodel;
+    QString mmodelName;
 };
 
 } /* namespace reditor */
 
-#endif /* RLOGGER_H */
+#endif /* RSCENE_OBJ_PICKER_H */

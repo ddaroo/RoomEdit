@@ -121,6 +121,7 @@ public slots:
     // TODO connect to menu signal
     void hshowGrid(bool show);
     void hhelpAbout();
+    void hobjSelected(QString modelName);
     
 private:
     // main wnd of the editor

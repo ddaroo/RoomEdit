@@ -42,7 +42,9 @@ int main(int argc, char *argv[])
     edit->attachToMainWnd(mwnd); // TODO create reditor manager class and implement all slots there to make possible multiple editor windows
     mwnd->resize(800, 600);
     mwnd->show();
+    // can't be moved earlier because it requires initiated OpenGL engine to load textures to GPU memory
     rscDB.load(reditor::RConfig::texturesDir(""), reditor::RConfig::modelsDir(""));
+    mwnd->initObjPickers();
     
     return app.exec();
 }

@@ -25,6 +25,7 @@ set(redit_SRCS
         GUI/REditWnd.cpp
         GUI/RLogger.cpp
         GUI/RMainWnd.cpp
+        GUI/RSceneObjPicker.cpp
         # other
         RConfig.cpp
 )
@@ -36,6 +37,7 @@ set(redit_MOC_HDRS
         GUI/REditWnd.h
         GUI/RLogger.h
         GUI/RMainWnd.h
+        GUI/RSceneObjPicker.h
 )
 QT4_WRAP_CPP(redit_MOC_SRCS ${redit_MOC_HDRS})
 

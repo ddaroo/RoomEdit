@@ -32,7 +32,7 @@ class REditObj
 
 public:
     REditObj();
-    REditObj(QString name);
+    explicit REditObj(QString name);
     virtual ~REditObj();
     /**
      * Paint object in the editor window

@@ -46,6 +46,7 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include "RCamera.h"
 #include "RSceneObj.h"
 #include "RConfig.h"
+#include "RProject.h"
 #include "GUI/REditWnd.h"
 #include "GUI/RMainWnd.h"
 
@@ -297,6 +298,10 @@ void REditor::hsaveProject()
         qDebug() << "Save project " << mopenedProject;
         // TODO save scene to the file
         msavedProject = true;
+
+        RProject * project = new RProject( mopenedProject );
+        project->save( this );
+        delete project;
     } 
 }
 
@@ -311,6 +316,10 @@ void REditor::hsaveProjectAs()
         mopenedProject = filePatch;
         hsaveProject();
         msavedProject = true;
+
+        RProject * project = new RProject( mopenedProject );
+        project->save( this );
+        delete project;
     }
     else
     {
@@ -333,7 +342,10 @@ void REditor::hopenProject()
             msavedProject = true;
             mroomDimensionsPicked = false;
             qDebug() << "Open project " << mopenedProject;
-            // TODO load scene from the file
+
+            RProject * project = new RProject( mopenedProject );
+            project->load( this );
+            delete project;
         }
         else
         {
@@ -347,17 +359,25 @@ void REditor::hnewProject()
     if(ensureSaved())
     {
         qDebug() << "New project";
-        foreach(REditObj * obj, mobjs)
-        {
-            if(obj != mroom && obj != msel && obj != mgrid)
-            {
-                delete obj;
-            }
-        }
-        mobjs.clear();
-        addObject(mgrid, false);
-        mroomDimensionsPicked = false;
+
+        clearProject();
     }
+}
+
+void REditor::clearProject()
+{
+    foreach(REditObj * obj, mobjs)
+    {
+        if (obj != mroom && obj != msel && obj != mgrid)
+        {
+            delete obj;
+        }
+    }
+
+    mobjs.clear();
+
+    addObject(mgrid, false);
+    mroomDimensionsPicked = false;
 }
 
 void REditor::hcloseProgram()

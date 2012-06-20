@@ -35,6 +35,16 @@ public:
     
     void updateCorners(float beginCorner[2], float endCorner[2]);
     
+    const float * beginCorner() const
+    {
+    	return mbeginCorner;
+    }
+
+    const float * endCorner() const
+    {
+    	return mendCorner;
+    }
+
 private:
    float mbeginCorner[2];
    float mendCorner[2];

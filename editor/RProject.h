@@ -17,48 +17,35 @@ You should have received a copy of the GNU General Public License
 along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RGRID_OBJ_H
-#define RGRID_OBJ_H
+#ifndef RProject_H
+#define RProject_H
 
+#include <QtCore/QString>
+#include <QtCore/QList>
+#include <QtCore/QDebug>
+#include <QtCore/QFile>
+#include <QtCore/QDataStream>
+
+#include "REditor.h"
 #include "REditObj.h"
+#include "RSceneObj.h"
+#include "RGridObj.h"
+#include "RObjRoom.h"
 
-namespace reditor 
+
+namespace reditor
 {
-/**
- * Base class for all objects which can be painted in the editor window and placed on the grid.
- */
-class RGridObj : public REditObj
-{  
-public:
-    explicit RGridObj(QString name);
-    RGridObj(QString name, int x, int y, int width, int height);
-    virtual ~RGridObj();
-    virtual void paintGL() const = 0;
-    int x() const
-    {
-        return mx;
-    }
-    int y() const
-    {
-        return my;
-    }
-    int width() const
-	{
-		return mwidth;
-	}
-	int height() const
-	{
-		return mheight;
-	}
-    void move(int x, int y);
-    
-private:
-    // x, y coordinate of the object on the grid
-    int mx, my;
-    // how many cells is used by the object
-    int mwidth, mheight;
-};
 
+class RProject
+{
+public:
+	RProject(QString name);
+	void save( REditor *editor );
+	void load( REditor *editor );
+
+private:
+    QString pname;
+};
 } // namespace reditor
 
-#endif /* RGRID_OBJ_H */
+#endif /* RProject_H */

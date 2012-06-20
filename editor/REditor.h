@@ -60,6 +60,8 @@ public:
     {
         return meditorWnd;
     }
+    //
+    void clearProject();
     /**
      * Adds new objects to the editor window.
      */
@@ -78,6 +80,10 @@ public:
     const RCamera * camera() const
     {
         return mcam;
+    }
+
+    bool inObjectsMode(){
+    	return mmode == OBJECTS;
     }
     
 public slots:

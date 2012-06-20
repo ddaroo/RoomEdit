@@ -19,6 +19,7 @@ set(redit_SRCS
         # grid objects
         RGridObj.cpp
         RObjRoom.cpp
+        RProject.cpp
         RObjSelection.cpp
         RSceneObj.cpp
         # GUI

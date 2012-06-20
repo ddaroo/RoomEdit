@@ -172,7 +172,7 @@ private:
     float mcellSize;
     
     // selection of the size of the room or rotation of the camera
-    enum EditMode {SELECTION, VIEW, OBJECTS, DEFAULT};
+    enum EditMode {SELECTION, VIEW, OBJECTS, PICKING, DEFAULT};
     EditMode mmode, mprevMode;
     
     // current path to the project file

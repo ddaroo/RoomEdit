@@ -168,9 +168,43 @@ void REditor::hmouseMoved(int x, int y)
            
         msel->updateCorners(mbeginCorner, mendCorner);
     }
-    if(mmode == OBJECTS && mactiveObject != NULL)
+    if((mmode == OBJECTS || mmode == PICKING) && mactiveObject != NULL)
     {   
-        mactiveObject->updatePosition(mcurPos);
+		if(mactiveObject->name() == "door")
+		{
+			float dist,best = abs(mcurPos[1] - mroom->beginCorner()[1]);
+			float pos[2] = {mcurPos[0] , mroom->beginCorner()[1] };
+			mactiveObject->updateRotation(0);
+			dist = abs(mcurPos[0] - mroom->beginCorner()[0]);
+			if(dist < best)
+			{
+				best = dist;
+				pos[0] = mroom->beginCorner()[0];
+				pos[1] = mcurPos[1];
+				mactiveObject->updateRotation(90);
+			}
+			dist = abs(mcurPos[1] - mroom->endCorner()[1]);
+			if(dist < best)
+			{
+				best = dist;
+				pos[0] = mcurPos[0];
+				pos[1] = mroom->endCorner()[1];
+				mactiveObject->updateRotation(0);
+			}
+			dist = abs(mcurPos[0] - mroom->endCorner()[0]);
+			if(dist < best)
+			{
+				best = dist;
+				pos[0] = mroom->endCorner()[0];
+				pos[1] = mcurPos[1];
+				mactiveObject->updateRotation(90);
+			}
+			mactiveObject->updatePosition(pos);
+		}
+		else
+		{
+			mactiveObject->updatePosition(mcurPos);
+		}
     }
     mmouseX = x;
     mmouseY = y;
@@ -233,6 +267,35 @@ void REditor::hmouseReleased(Qt::MouseButton b, int x, int y)
         mactiveObject->updateRotation(mrotation);
         msavedProject = false;
     }
+	if(b == Qt::LeftButton && mmode == PICKING)
+	{
+		if(mactiveObject != NULL)
+		{
+			mactiveObject = NULL;
+		}
+		else
+		{
+			float best = 2;
+		    float dist = 0;
+		    updateCoord(x, y, mcurPos);
+			foreach(REditObj * obj, mobjs)
+			{
+				RSceneObj * current = dynamic_cast<RSceneObj *>(obj);
+				if(current != 0)
+				{
+					dist = sqrt( pow(current->position()[0] - mcurPos[0], 2) + pow(current->position()[1] - mcurPos[1], 2) );
+					//qDebug() << "best : " << best << " Dist : " << dist;
+					if(dist < best)
+					{	
+						best = dist;
+						mactiveObject = current;
+						//mmode = OBJECTS;
+					}
+					//qDebug() << "Current pos : " << current->position()[0] << "  " << current->position()[1];
+				}
+			}
+		}
+	}
     if(b == Qt::RightButton && mmode == VIEW)
     {
         mmode = mprevMode;
@@ -261,7 +324,7 @@ void REditor::hkeyPressed(int keyCode)
         break;
 
     case Qt::Key_R:
-        if (mmode == OBJECTS)
+        if ((mmode == OBJECTS || mmode == PICKING) && mactiveObject != NULL)
         {
             mrotation += ROTATION_STEP;
             mrotation = mrotation%360;
@@ -279,7 +342,14 @@ void REditor::hkeyPressed(int keyCode)
     case Qt::Key_G:
         hshowGrid(!mgridVisible);
         break;
-
+	case Qt::Key_P:
+		if(mactiveObject != NULL)
+		{
+		    removeObject(mactiveObject);
+			delete mactiveObject;
+			mactiveObject = NULL;
+		}
+		mmode = PICKING;
     default:
         break;
     }

@@ -61,6 +61,7 @@ void RProject::load( REditor *editor ){
 			room->updateCorners(mbeginCorner, mendCorner);
 
 			editor->addObject(room);
+			editor->setDimensionsPicket();
 		}
 		// grid object
 		else if( name == "Grid" ){

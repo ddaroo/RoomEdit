@@ -86,6 +86,10 @@ public:
     	return mmode == OBJECTS;
     }
     
+    void setDimensionsPicket(){
+    	mroomDimensionsPicked = true;
+    }
+
 public slots:
     /**
      * Handler for a mouse move event in the editor window

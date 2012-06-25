@@ -68,22 +68,50 @@ void RResourceDB::load(const QString& textDir, const QString& modDir)
     QDir mdir(mmodDir);
     foreach(QFileInfo finfo, mdir.entryInfoList())
     {
-        if (finfo.isFile() && finfo.suffix().toLower() == "3ds")
+        if (finfo.isFile() && finfo.suffix().toLower() == "3ds") // FIXME file extension should be a constant
         {
             mod = new RModel3DS(finfo.absoluteFilePath().toStdString().c_str(), 1.0f);
             mmodels.insert(finfo.baseName(), mod);
-            qDebug() << "Model " << finfo.baseName() << " loaded from the file " << finfo.absoluteFilePath();
+            qDebug() << "Model " << finfo.absoluteFilePath() << " loaded from the file " << finfo.absoluteFilePath();
         }
     }
 }
+// FIXME bad code, duplicates many of the functionality of the RResourceDB::load()
+void RResourceDB::loadModels(const QString& textDir, const QString& modDir, const QList<QString>& modelNames)
+{
+    mtextDir = textDir;
+    mmodDir = modDir;
+    // load models from the directory
+    RModel3DS * mod;
+    foreach(QString model, modelNames)
+    {
+        QFileInfo finfo(modDir + model + ".3ds"); // FIXME file extension should be a constant
+        mod = new RModel3DS(finfo.absoluteFilePath().toStdString().c_str(), 1.0f, this);
+        mmodels.insert(model, mod);
+        qDebug() << "Model " << finfo.baseName() << " loaded from the file " << finfo.absoluteFilePath();
+    }
+}
 
-RTexture * RResourceDB::texture(const QString& name) const
+RTexture * RResourceDB::texture(const QString& name)
 {
     TexsCit cit = mtextures.constFind(name);
-    if(cit == mtextures.end())
+    if(cit == mtextures.constEnd())
     {
-        // TODO it would be better to use some default texture instead of hard crash
-        return 0;
+        // try to load texture from a directory
+        QFileInfo finfo(mtextDir + name + ".png"); // FIXME hardcoded extension
+        if(!finfo.exists()) 
+        {
+            finfo = QFileInfo(mtextDir + name + ".jpg"); // FIXME hardcoded extension
+            if(!finfo.exists())
+            {
+                // TODO it would be better to use some default texture instead of hard crash
+                return 0;
+            }
+        }
+        RTexture * tex = new RTexture(finfo.absoluteFilePath());
+        mtextures.insert(finfo.baseName(), tex);
+        qDebug() << "Texture " << finfo.baseName() << "[" <<  tex->id() << "]" << " loaded from the file " << finfo.absoluteFilePath();
+        return tex;
     }
     return cit.value();
 }
@@ -91,7 +119,7 @@ RTexture * RResourceDB::texture(const QString& name) const
 RModel3DS * RResourceDB::model(const QString& name) const
 {
     ModsCit cit = mmodels.constFind(name);
-    if(cit == mmodels.end())
+    if(cit == mmodels.constEnd())
     {
         // TODO it would be better to use some default model instead of hard crash
         return 0;

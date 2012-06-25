@@ -447,6 +447,7 @@ void REditor::clearProject()
     }
 
     mobjs.clear();
+    mactiveObject = NULL;
 
     addObject(mgrid, false);
     mroomDimensionsPicked = false;

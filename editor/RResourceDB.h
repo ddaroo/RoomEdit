@@ -41,8 +41,9 @@ public:
     
     RResourceDB();
     virtual ~RResourceDB();
-    void load(const QString& textDir, const QString& modDir);
-    RTexture * texture(const QString& name) const;
+    void load(const QString& textDir, const QString& modDirer = 0);
+    void loadModels(const QString& textDir, const QString& modDir, const QList<QString>& modelNames);
+    RTexture * texture(const QString& name);
     RModel3DS * model(const QString& name) const;
     Mods models()
     {

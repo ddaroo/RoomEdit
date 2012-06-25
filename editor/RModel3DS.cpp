@@ -28,15 +28,27 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 #include "Vector.h"
 #include "RConfig.h"
 #include "RResourceDB.h"
-#include "global.h"
 
 namespace reditor
 {
     
-RModel3DS::RModel3DS(const char* filename, const float scale) : m_filename(filename), m_scale(scale) 
+RModel3DS::RModel3DS(const char* filename, const float scale, RResourceDB * resources) : m_filename(filename), m_scale(scale) 
 {
-    std::ifstream *modelFile = new std::ifstream(filename,std::ios::in | std::ios::binary | std::ios::ate);
-    QFileInfo finfo(filename);
+    if(resources)
+    {
+        m_rsc = resources;
+    }
+    else
+    {
+        m_rsc = &rscDB;
+    }
+    load();
+}
+
+void RModel3DS::load()
+{
+    std::ifstream *modelFile = new std::ifstream(m_filename.c_str(),std::ios::in | std::ios::binary | std::ios::ate);
+    QFileInfo finfo(QString::fromStdString(m_filename));
 
     if (!modelFile->is_open()) {
         qCritical() << "Could not open " << finfo.absoluteFilePath();
@@ -243,12 +255,12 @@ void RModel3DS::readChunk(std::ifstream *modelFile,  int objectStart, int object
         case CHUNK_MATERIAL_BLOCK:
             if (DEBUG_OUTPUT) std::cout<<std::endl<<"[Material block]"<<std::endl;
 
-            m_currentMaterial = new material3DS();
+            m_currentMaterial = new material3DS(m_rsc);
             m_currentMaterial->setList(glGenLists(1));
             // Read material sub-chunks
             readChunk(modelFile, modelFile->tellg(), chunkLength - (long(modelFile->tellg()) - offset));
 
-            m_materials[m_currentMaterial->getName()] = *m_currentMaterial;
+            m_materials.insert(std::pair<std::string, material3DS>(m_currentMaterial->getName(), *m_currentMaterial));
             delete m_currentMaterial;
             break;
 
@@ -370,11 +382,11 @@ void material3DS::loadTexture(std::string filename, int chunkType)
     QFileInfo finfo(QString::fromStdString(filename));
     switch (chunkType) {
     case CHUNK_TEXTURE_MAP:
-        m_textureMapId = rscDB.texture(finfo.baseName())->id();
+        m_textureMapId = m_rsc->texture(finfo.baseName())->id();
         m_hasTextureMap = true;
         break;
     case CHUNK_BUMP_MAP:
-        m_bumpMapId = rscDB.texture(finfo.baseName())->id();
+        m_bumpMapId = m_rsc->texture(finfo.baseName())->id();
         m_hasBumpMap = true;
         break;
     }

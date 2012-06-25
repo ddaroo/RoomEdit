@@ -24,7 +24,7 @@ along with RoomEdit. If not, see <http://www.gnu.org/licenses/>.
 
 namespace reditor
 {
-
+class RResourceDB;
 class RModel3DS;
     
 class RSceneObjPicker : public QGLWidget
@@ -39,17 +39,19 @@ signals:
     void selected(QString modelName);
 
 protected:
-    void initializeGL();
-    void paintGL();
-    void enterEvent(QEvent * event);
-    void leaveEvent(QEvent * event);
-    void mouseReleaseEvent(QMouseEvent * event);
+    virtual void initializeGL();
+    virtual void paintGL();
+    virtual void resizeGL(int width, int height);
+    virtual void enterEvent(QEvent * event);
+    virtual void leaveEvent(QEvent * event);
+    virtual void mouseReleaseEvent(QMouseEvent * event);
     
 private:
     // starts/stops animation
     void animate(bool animate);
     
     RModel3DS * mmodel;
+    RResourceDB * mrscDB;
     QString mmodelName;
 };
 
